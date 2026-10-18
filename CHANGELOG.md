@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. This projec
 - Русская локализация интерфейса: `src/i18n/ru.json` (413 строк, русские формы множественного числа) и словарь схемы сервера `src/i18n/schema-ru.json`.
 - `src/lib/localizeSchema.ts`: подмена текстов схемы, названия языков и часовых поясов через `Intl`, русские значения по умолчанию (`ru-RU`, `Europe/Moscow`).
 - `scripts/extract-strings.mjs` и `docs/TRANSLATION.md` для продолжения перевода.
+- Переведено около 60 % строк схемы (навигация, списки, описания объектов, все подписи полей форм, значения выпадающих списков). Пояснения к полям пока на английском.
 
 ### Removed
 - Код только для Enterprise (панель мониторинга, трассировка), рекламные окна Enterprise.
