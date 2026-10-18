@@ -7,6 +7,8 @@
 import { getBasePath } from '@/lib/basePath';
 
 export const CIMD_DOCUMENT_NAME = 'oauth-client.json';
+// Форк: совместимость с Stalwart 0.16, где клиент OAuth зарегистрирован под этим идентификатором.
+export const DEFAULT_CLIENT_ID = 'stalwart-webui';
 
 export interface ClientIdSources {
   envClientId: string | undefined;
@@ -26,7 +28,7 @@ export function chooseOAuthClientId(sources: ClientIdSources): string | null {
   if (env) return env;
   if (sources.metaClientId) return sources.metaClientId;
   if (sources.cimdSupported) return cimdClientId(sources.origin, sources.basePath);
-  return null;
+  return DEFAULT_CLIENT_ID;
 }
 
 export function getMetaClientId(): string | null {

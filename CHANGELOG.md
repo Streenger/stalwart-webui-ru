@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [2.0.0-ru.2] - 2026-10-18
 
+### Fixed
+- Вход: если сервер не поддерживает документы метаданных клиента OAuth (Stalwart 0.16), используется идентификатор клиента `stalwart-webui`.
+
 Полная русская локализация.
 
 ### Changed
