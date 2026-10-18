@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
-import type { ReactNode } from 'react';
-import { isValidElement, Children } from 'react';
 
 /**
  * Quote every field for consistent CSV output and double embedded quotes.
@@ -37,18 +35,3 @@ export function downloadCsv(filename: string, csvContent: string): void {
   URL.revokeObjectURL(url);
 }
 
-/**
- * Flattens a rendered cell (built from plain elements like Badge/span/icons —
- * see renderCellValue) down to its text content, for exporting the same
- * values the table shows without duplicating that formatting logic here.
- */
-export function reactNodeToText(node: ReactNode): string {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(reactNodeToText).join('');
-  if (isValidElement(node)) {
-    const props = node.props as { children?: ReactNode };
-    return Children.toArray(props.children).map(reactNodeToText).join('');
-  }
-  return '';
-}

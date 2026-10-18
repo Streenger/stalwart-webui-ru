@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
+import { MoreHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Lock, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -26,11 +26,10 @@ interface RowActionsProps {
   label: string;
   hrefFor: (action: NavigateAction) => string | null;
   onMutation: (action: MutationAction) => void;
-  onLocked: () => void;
   disabled?: boolean;
 }
 
-export function RowActions({ actions, label, hrefFor, onMutation, onLocked, disabled = false }: RowActionsProps) {
+export function RowActions({ actions, label, hrefFor, onMutation, disabled = false }: RowActionsProps) {
   const { t } = useTranslation();
   return (
     <DropdownMenu>
@@ -56,17 +55,6 @@ export function RowActions({ actions, label, hrefFor, onMutation, onLocked, disa
                 onSelect={() => onMutation(entry)}
               >
                 {entry.action.label}
-              </DropdownMenuItem>
-            );
-          }
-          if (entry.locked) {
-            return (
-              <DropdownMenuItem key={entry.key} onSelect={onLocked}>
-                {entry.label}
-                <Lock className="ml-auto h-3 w-3 text-muted-foreground" aria-hidden />
-                <span className="sr-only">
-                  {t('enterprise.featureDisabled', 'This feature requires an Enterprise license.')}
-                </span>
               </DropdownMenuItem>
             );
           }

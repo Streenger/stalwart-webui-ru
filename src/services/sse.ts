@@ -7,9 +7,9 @@
 import { apiFetch, getApiBaseUrl } from '@/services/api';
 import { isRetryableError } from '@/services/errors';
 
-export type StreamErrorReason = 'token' | 'rejected' | 'disconnected' | 'timeout';
+type StreamErrorReason = 'token' | 'rejected' | 'disconnected' | 'timeout';
 
-export class StreamError extends Error {
+class StreamError extends Error {
   readonly reason: StreamErrorReason;
 
   constructor(reason: StreamErrorReason, cause?: unknown) {
@@ -27,7 +27,7 @@ export type StreamStatus =
   | { kind: 'closed' }
   | { kind: 'failed'; error: StreamError };
 
-export type StreamAction =
+type StreamAction =
   | { type: 'connect' }
   | { type: 'opened' }
   | { type: 'stable' }
@@ -35,23 +35,23 @@ export type StreamAction =
   | { type: 'retry' }
   | { type: 'stop' };
 
-export interface RetryPolicy {
+interface RetryPolicy {
   maxAttempts: number;
   baseDelayMs: number;
   maxDelayMs: number;
 }
 
-export const DEFAULT_RETRY_POLICY: RetryPolicy = { maxAttempts: 5, baseDelayMs: 2_000, maxDelayMs: 10_000 };
+const DEFAULT_RETRY_POLICY: RetryPolicy = { maxAttempts: 5, baseDelayMs: 2_000, maxDelayMs: 10_000 };
 
 export const IDLE_STATUS: StreamStatus = { kind: 'idle' };
 
-export const STABLE_AFTER_MS = 30_000;
+const STABLE_AFTER_MS = 30_000;
 
-export function backoffDelay(attempt: number, policy: RetryPolicy): number {
+function backoffDelay(attempt: number, policy: RetryPolicy): number {
   return Math.min(policy.maxDelayMs, policy.baseDelayMs * 2 ** Math.max(0, attempt - 1));
 }
 
-export function streamTransition(status: StreamStatus, action: StreamAction, policy: RetryPolicy): StreamStatus {
+function streamTransition(status: StreamStatus, action: StreamAction, policy: RetryPolicy): StreamStatus {
   switch (action.type) {
     case 'connect':
       return { kind: 'connecting', attempt: 0 };
@@ -76,13 +76,9 @@ export function streamTransition(status: StreamStatus, action: StreamAction, pol
   }
 }
 
-export function isStreamActive(status: StreamStatus): boolean {
-  return status.kind === 'connecting' || status.kind === 'open' || status.kind === 'reconnecting';
-}
+type StreamParams = Record<string, string | readonly string[] | undefined>;
 
-export type StreamParams = Record<string, string | readonly string[] | undefined>;
-
-export function buildStreamUrl(baseUrl: string, path: string, params: StreamParams, token: string): string {
+function buildStreamUrl(baseUrl: string, path: string, params: StreamParams, token: string): string {
   const search = new URLSearchParams();
   search.set('token', token);
   for (const [key, value] of Object.entries(params)) {
@@ -93,23 +89,14 @@ export function buildStreamUrl(baseUrl: string, path: string, params: StreamPara
   return `${baseUrl.replace(/\/+$/, '')}${path}?${search.toString()}`;
 }
 
-export function parseJsonBatch<T>(isItem: (value: unknown) => value is T): (data: string) => T[] {
-  return (data) => {
-    const parsed: unknown = JSON.parse(data);
-    const items = Array.isArray(parsed) ? parsed : [parsed];
-    if (!items.every(isItem)) throw new TypeError('Unexpected event stream payload');
-    return items;
-  };
-}
-
-export interface EventSourceLike {
+interface EventSourceLike {
   onopen: ((this: EventSource, ev: Event) => unknown) | null;
   onerror: ((this: EventSource, ev: Event) => unknown) | null;
   addEventListener(type: string, listener: (event: MessageEvent<string>) => void): void;
   close(): void;
 }
 
-export interface StreamDeps {
+interface StreamDeps {
   fetchToken: (tokenPath: string) => Promise<string>;
   createEventSource: (url: string) => EventSourceLike;
   baseUrl: () => string;

@@ -15,7 +15,7 @@ import { COUNT_COLUMN_SOURCES, QUOTA_USAGE_COLUMN, computeQuotaUsage, countColum
 
 type Item = Record<string, unknown>;
 
-export function cellText(column: string, item: Item): string {
+function cellText(column: string, item: Item): string {
   if (column === QUOTA_USAGE_COLUMN) {
     const { used, limit } = computeQuotaUsage(item);
     return `${formatSize(used)} / ${limit ? formatSize(limit) : '∞'}`;

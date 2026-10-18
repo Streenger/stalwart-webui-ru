@@ -43,7 +43,6 @@ export function VariantSelect({
           htmlFor={ids.inputId}
           label={label || t('field.type', 'Type')}
           marker={null}
-          locked={false}
         />
       )}
       <Select value={value} onValueChange={onChange} disabled={readOnly}>

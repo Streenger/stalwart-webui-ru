@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
-export const SIEVEPAD_URL = 'https://sievepad.com/';
+const SIEVEPAD_URL = 'https://sievepad.com/';
 
 const SIEVEPAD_FORMAT_VERSION = 1;
 const SIEVEPAD_MAX_NAME_LENGTH = 80;
@@ -20,7 +20,7 @@ function toBase64Url(bytes: Uint8Array): string {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export async function sievepadLink(name: string, source: string, base = SIEVEPAD_URL): Promise<string> {
+async function sievepadLink(name: string, source: string, base = SIEVEPAD_URL): Promise<string> {
   const json = JSON.stringify({
     v: SIEVEPAD_FORMAT_VERSION,
     name: name.slice(0, SIEVEPAD_MAX_NAME_LENGTH),

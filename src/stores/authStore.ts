@@ -174,12 +174,3 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
-
-export function applyAccessTokenOverride(): void {
-  const token = import.meta.env.VITE_ACCESS_TOKEN as string | undefined;
-  if (!token) return;
-  const { accessToken } = useAuthStore.getState();
-  if (!accessToken || accessToken === token) {
-    useAuthStore.getState().setTokens(token, '', 86400, '');
-  }
-}

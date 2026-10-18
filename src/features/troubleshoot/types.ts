@@ -57,8 +57,8 @@ export interface MX {
 
 export type ReportUri = { type: 'mail'; email: string } | { type: 'http'; url: string };
 
-export type Policy = Record<string, unknown>;
-export type Tlsa = Record<string, unknown>;
+type Policy = Record<string, unknown>;
+type Tlsa = Record<string, unknown>;
 
 export type StageSeverity = 'pending' | 'ok' | 'warn' | 'error';
 

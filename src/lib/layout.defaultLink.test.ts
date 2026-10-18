@@ -35,7 +35,7 @@ describe('findPreferredDefaultLinkInLayout', () => {
   it('prefers Overview when Dashboard is not accessible (community)', () => {
     const schema = schemaWithLinks();
     // CustomComponent/* is visible; Dashboard is enterprise → inaccessible on community
-    const link = findPreferredDefaultLinkInLayout(schema, layout, 'community', () => true, () => false);
+    const link = findPreferredDefaultLinkInLayout(schema, layout, () => true, () => false);
     expect(link).toBe('CustomComponent/Overview');
   });
 });

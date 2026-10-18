@@ -19,8 +19,8 @@ const CERT_EXPIRING_SOON_MS = 30 * 24 * 60 * 60 * 1000;
 /** Cap report sampling so Overview stays cheap. */
 const REPORT_SAMPLE_LIMIT = 25;
 
-export type CardTotalStatus = 'ok' | 'unavailable';
-export type CardTotalUnavailableReason = 'requestFailed' | 'queryRejected' | 'missingTotal';
+type CardTotalStatus = 'ok' | 'unavailable';
+type CardTotalUnavailableReason = 'requestFailed' | 'queryRejected' | 'missingTotal';
 export type AttentionLevel = 'none' | 'warn' | 'danger';
 
 export interface CardTotal {

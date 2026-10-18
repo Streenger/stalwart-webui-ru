@@ -62,7 +62,7 @@ export function FormSections({ sections, data, errors, readOnly, onFieldChange, 
   );
 }
 
-export function FormSectionCard({ title, children }: { title?: string; children: ReactNode }) {
+function FormSectionCard({ title, children }: { title?: string; children: ReactNode }) {
   return (
     <Card>
       {title && (

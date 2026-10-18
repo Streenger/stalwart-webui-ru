@@ -12,8 +12,8 @@ function isEnabled(envVar: string | undefined): boolean {
   return v !== '' && v !== 'false' && v !== '0';
 }
 
-export const debugJmap = isEnabled(import.meta.env.VITE_DEBUG_JMAP);
-export const debugForms = isEnabled(import.meta.env.VITE_DEBUG_FORMS);
+const debugJmap = isEnabled(import.meta.env.VITE_DEBUG_JMAP);
+const debugForms = isEnabled(import.meta.env.VITE_DEBUG_FORMS);
 
 type JmapCall = [string, Record<string, unknown>, string];
 

@@ -5,7 +5,6 @@
  */
 
 import { useAuthStore } from '@/stores/authStore';
-import type { Edition } from '@/stores/accountStore';
 import { apiFetchJson } from '@/services/api';
 import { JmapMethodError, JmapProtocolError } from '@/services/errors';
 import { logJmapExchange } from '@/lib/debug';
@@ -71,7 +70,7 @@ export function getAccountId(objectType: string): string {
   return activeAccountId;
 }
 
-export function jmapApiPath(apiUrl: string | null): string {
+function jmapApiPath(apiUrl: string | null): string {
   const path = apiUrl || '/jmap';
   if (!path.startsWith('http://') && !path.startsWith('https://')) return path;
   try {
@@ -81,7 +80,7 @@ export function jmapApiPath(apiUrl: string | null): string {
   }
 }
 
-export function methodResult<T = JmapObject>(responses: JmapMethodResponse[], callId: string, methodName: string): T {
+function methodResult<T = JmapObject>(responses: JmapMethodResponse[], callId: string, methodName: string): T {
   const entry = responses.find((r) => r[2] === callId);
   if (!entry) {
     throw new JmapProtocolError(`JMAP response for ${methodName} (call ${callId}) is missing`);
@@ -118,7 +117,7 @@ export async function jmapRequest(methodCalls: JmapMethodCall[], signal?: AbortS
   return data.methodResponses;
 }
 
-export async function jmapCall<T = JmapObject>(
+async function jmapCall<T = JmapObject>(
   methodName: string,
   args: Record<string, unknown>,
   signal?: AbortSignal,
@@ -127,7 +126,7 @@ export async function jmapCall<T = JmapObject>(
   return methodResult<T>(responses, '0', methodName);
 }
 
-export function jmapGet(
+function jmapGet(
   objectType: string,
   ids: string[] | null,
   properties?: string[],
@@ -159,7 +158,7 @@ export function jmapQuery(
   return jmapCall<JmapQueryResponse>(`${objectType}/query`, args, options.signal);
 }
 
-export function jmapSetArgs(objectType: string, set: JmapSetOptions, accountId?: string): Record<string, unknown> {
+function jmapSetArgs(objectType: string, set: JmapSetOptions, accountId?: string): Record<string, unknown> {
   const args: Record<string, unknown> = { accountId: accountId ?? getAccountId(objectType) };
   if (set.create && Object.keys(set.create).length > 0) args.create = set.create;
   if (set.update && Object.keys(set.update).length > 0) args.update = set.update;
@@ -167,7 +166,7 @@ export function jmapSetArgs(objectType: string, set: JmapSetOptions, accountId?:
   return args;
 }
 
-export function blobUploadCalls(blobs: Record<string, BlobUpload>, accountId: string): JmapMethodCall[] {
+function blobUploadCalls(blobs: Record<string, BlobUpload>, accountId: string): JmapMethodCall[] {
   const tags = Object.keys(blobs);
   if (tags.length === 0) return [];
   const create: Record<string, unknown> = {};
@@ -322,7 +321,7 @@ export function fetchSchema(signal?: AbortSignal): Promise<Schema> {
 
 export interface AccountInfoResponse {
   permissions: string[];
-  edition: Edition;
+  edition: string;
   locale: string;
 }
 

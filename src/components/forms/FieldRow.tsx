@@ -6,19 +6,16 @@
 
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Lock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Markdown } from '@/components/common/Markdown';
-import { HelpTooltip } from '@/components/common/HelpTooltip';
 import { FieldValue } from '@/components/values/FieldValue';
 import { SievepadButton } from '@/components/forms/SievepadButton';
 import { FieldScopeProvider } from '@/components/forms/FormProvider';
 import { FieldControl } from '@/components/forms/widgets/FieldControl';
 import { widgetTraits } from '@/components/forms/widgets/registry';
-import { fieldIds, isEnterpriseLockedIn, useFieldScope, useFormContext } from '@/components/forms/formContext';
+import { fieldIds, useFieldScope, useFormContext } from '@/components/forms/formContext';
 import { requiredMarker } from '@/components/forms/formLogic';
 import { resolveObject } from '@/lib/schemaResolver';
-import { cn } from '@/lib/utils';
 import type { ControlProps } from '@/components/forms/widgets/types';
 import type { Field, FormField } from '@/types/schema';
 
@@ -38,10 +35,9 @@ interface FieldLabelProps {
   htmlFor?: string;
   label: string;
   marker: 'required' | 'optional' | null;
-  locked: boolean;
 }
 
-export function FieldLabel({ id, htmlFor, label, marker, locked }: FieldLabelProps) {
+export function FieldLabel({ id, htmlFor, label, marker }: FieldLabelProps) {
   const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2">
@@ -56,18 +52,11 @@ export function FieldLabel({ id, htmlFor, label, marker, locked }: FieldLabelPro
           <span className="ml-1.5 text-xs font-normal text-muted-foreground">{t('field.optional', '(optional)')}</span>
         )}
       </Label>
-      {locked && (
-        <HelpTooltip
-          icon={Lock}
-          label={label}
-          content={t('enterprise.featureDisabled', 'This feature requires an Enterprise license.')}
-        />
-      )}
     </div>
   );
 }
 
-export function FieldError({ id, error }: { id: string; error?: string }) {
+function FieldError({ id, error }: { id: string; error?: string }) {
   if (!error) return null;
   return (
     <p id={id} className="text-xs text-destructive">
@@ -85,13 +74,11 @@ export function FieldRow({ field, formField, value, onChange, error, readOnly: f
   const ids = fieldIds(ctx.idPrefix, [...scope.path, formField.name]);
   const topLevel = scope.path.length === 0;
   const referencesLocked =
-    ft.type === 'objectId' && ctx.isCommunity && !!resolveObject(ctx.schema, ft.objectName)?.enterprise;
+    ft.type === 'objectId' && !!resolveObject(ctx.schema, ft.objectName)?.enterprise;
   if (referencesLocked) return null;
-  const locked = isEnterpriseLockedIn(ctx, field.enterprise);
   const readOnly =
     scope.readOnly ||
     forceReadOnly ||
-    locked ||
     referencesLocked ||
     field.update === 'serverSet' ||
     (topLevel && ctx.mode === 'edit' && field.update === 'immutable');
@@ -147,14 +134,13 @@ export function FieldRow({ field, formField, value, onChange, error, readOnly: f
         htmlFor={traits.labelMode === 'control' && !asValue ? ids.inputId : undefined}
         label={formField.label}
         marker={marker}
-        locked={locked}
       />
       {field.description && (
         <div id={ids.descriptionId}>
           <Markdown source={field.description} className="text-xs text-muted-foreground" />
         </div>
       )}
-      <div className={cn(locked && 'opacity-60')}>{body}</div>
+      <div>{body}</div>
       {ft.type === 'string' && ft.format === 'sieve' && (
         <SievepadButton scriptName={ctx.recordLabel} source={typeof value === 'string' ? value : ''} />
       )}

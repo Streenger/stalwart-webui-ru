@@ -5,10 +5,10 @@
  */
 
 import { layoutLabel } from '@/lib/localizeSchema';
-import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Lock } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { DynamicIcon } from '@/components/common/DynamicIcon';
@@ -46,21 +46,6 @@ function NavLink({ node, depth }: { node: Extract<NavNode, { kind: 'link' }>; de
     </>
   );
   const className = cn(buttonVariants({ variant: 'ghost' }), itemClass, depth > 0 && 'text-sm');
-
-  if (nav.isLocked(node.viewName)) {
-    return (
-      <button
-        type="button"
-        className={className}
-        style={indent(depth)}
-        onClick={nav.openUpsell}
-        aria-describedby={nav.lockedHintId}
-      >
-        {content}
-        <Lock aria-hidden="true" className="ml-auto h-3 w-3 text-muted-foreground" />
-      </button>
-    );
-  }
 
   return (
     <Link
@@ -173,8 +158,7 @@ export function Sidebar() {
   const activeSection = useUIStore((s) => s.activeSection);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
-  const { layouts, isVisible, isLocked } = useLayoutNavigation();
-  const lockedHintId = useId();
+  const { layouts, isVisible } = useLayoutNavigation();
 
   useEffect(() => {
     if (window.matchMedia('(max-width: 767px)').matches) setSidebarOpen(false);
@@ -188,9 +172,6 @@ export function Sidebar() {
     sectionName: layout.name,
     pathname,
     isVisible,
-    isLocked,
-    openUpsell: () => {},
-    lockedHintId,
   };
 
   return (
@@ -205,9 +186,6 @@ export function Sidebar() {
         aria-label={t('sidebar.label', 'Sidebar')}
         className="fixed bottom-0 left-0 top-14 z-30 flex w-64 flex-col border-r bg-background"
       >
-        <span id={lockedHintId} className="sr-only">
-          {t('enterprise.featureHint', 'Enterprise feature')}
-        </span>
         <div className="flex-1 overflow-y-auto py-2 [scrollbar-width:thin]">
           <nav aria-label={layoutLabel(layout.name)} className="flex flex-col gap-0.5 px-2">
             <SidebarNavContext value={nav}>

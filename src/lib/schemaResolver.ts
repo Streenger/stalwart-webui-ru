@@ -39,13 +39,13 @@ export function resolveObject(schema: Schema, viewName: string): ResolvedObject 
   };
 }
 
-export interface ResolvedSingleSchema {
+interface ResolvedSingleSchema {
   type: 'single';
   schemaName: string;
   fields: Fields;
 }
 
-export interface ResolvedMultipleSchema {
+interface ResolvedMultipleSchema {
   type: 'multiple';
   variants: {
     name: string;

@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { SchemaIcon } from '@/components/common/SchemaIcon';
+import { DynamicIcon } from '@/components/common/DynamicIcon';
 import { useAccountStore } from '@/stores/accountStore';
 import { useSchemaStore } from '@/stores/schemaStore';
 import { OVERVIEW_CARDS, OVERVIEW_SECTIONS } from '@/features/overview/cards';
@@ -29,7 +29,7 @@ import {
 const REFRESH_COOLDOWN_MS = 10_000;
 
 function LucideIcon({ name, className }: { name: string; className?: string }) {
-  return <SchemaIcon name={name} className={className} fallback={HelpCircle} warnUnknown />;
+  return <DynamicIcon name={name} className={className} fallback={HelpCircle} />;
 }
 
 function OverviewStatCard({
@@ -195,7 +195,7 @@ export function OverviewPage() {
             <p className="text-sm text-muted-foreground">
               {t(
                 'overview.subtitle',
-                'Inventory of directory objects, mail readiness, and reports. Live telemetry stays on the Enterprise Dashboard.',
+                'Inventory of directory objects, mail readiness, and reports.',
               )}
             </p>
           </div>

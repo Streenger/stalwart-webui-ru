@@ -297,7 +297,7 @@ export function BootstrapWizard() {
           )}
           <CardContent className={current.title ? '' : 'pt-6'}>
             <fieldset disabled={saving} className="min-w-0 space-y-6">
-              <FormProvider schema={schema} mode="create" hideEnterprise>
+              <FormProvider schema={schema} mode="create">
                 {current.fields.map(({ formField, field }) => (
                   <FieldRow
                     key={formField.name}

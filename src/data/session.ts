@@ -25,7 +25,7 @@ import {
   withWebhookColumns,
 } from '@/lib/operationsListColumns';
 
-export interface SessionInfo {
+interface SessionInfo {
   accounts: Record<string, { name: string; isPersonal: boolean }>;
   primaryAccountId: string;
   apiUrl: string;
@@ -33,7 +33,7 @@ export interface SessionInfo {
   maxObjectsInSet?: number;
 }
 
-export function parseSession(session: JmapSession): SessionInfo {
+function parseSession(session: JmapSession): SessionInfo {
   const accounts: SessionInfo['accounts'] = {};
   for (const [accountId, info] of Object.entries(session.accounts ?? {})) {
     accounts[accountId] = { name: info.name, isPersonal: info.isPersonal };
@@ -54,7 +54,7 @@ export function parseSession(session: JmapSession): SessionInfo {
   };
 }
 
-export async function initializeSession(signal?: AbortSignal): Promise<true> {
+async function initializeSession(signal?: AbortSignal): Promise<true> {
   const [session, rawSchema, account] = await Promise.all([
     fetchSession(signal),
     fetchSchema(signal),
@@ -83,7 +83,7 @@ export async function initializeSession(signal?: AbortSignal): Promise<true> {
     .getState()
     .setSession(info.accounts, info.primaryAccountId, info.apiUrl, info.maxObjectsInGet, info.maxObjectsInSet);
   useSchemaStore.getState().setSchema(schema);
-  useAccountStore.getState().setAccountInfo(account.permissions, account.edition, account.locale);
+  useAccountStore.getState().setAccountInfo(account.permissions, account.locale);
   // Russian fork: the admin interface is Russian by default; set localStorage 'stalwart.ui.lang' = 'en' to override.
   setLocale(window.localStorage.getItem('stalwart.ui.lang') ?? 'ru');
   return true;

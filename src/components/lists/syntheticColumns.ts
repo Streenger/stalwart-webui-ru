@@ -23,10 +23,6 @@ export const COUNT_COLUMN_SOURCES: Record<string, string> = {
 
 export const QUOTA_USAGE_COLUMN = 'quotaUsage';
 
-export function isSyntheticColumn(name: string): boolean {
-  return name === QUOTA_USAGE_COLUMN || name in COUNT_COLUMN_SOURCES || isReportSummaryColumn(name);
-}
-
 /** Реальные свойства JMAP для набора (возможно синтетических) столбцов. */
 export function fetchProperties(columns: Array<{ name: string }>, options: { mailbox?: boolean } = {}): string[] {
   const properties: string[] = ['id'];
@@ -69,7 +65,7 @@ export function countColumnValue(column: string, item: Item): number {
   return Object.keys((item[source] as Record<string, unknown>) ?? {}).length;
 }
 
-export function clientSortValue(column: string, item: Item): string | number {
+function clientSortValue(column: string, item: Item): string | number {
   if (column in COUNT_COLUMN_SOURCES) return countColumnValue(column, item);
   if (isReportSummaryColumn(column)) return getReportSummaryValue(column, item);
   if (column === QUOTA_USAGE_COLUMN) return computeQuotaUsage(item).used;

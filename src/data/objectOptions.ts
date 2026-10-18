@@ -38,7 +38,7 @@ function cachedOptionLabel(
   return undefined;
 }
 
-export function displayNameQuery(schema: Schema, viewOrObjectName: string, id: string, client: QueryClient) {
+function displayNameQuery(schema: Schema, viewOrObjectName: string, id: string, client: QueryClient) {
   const objectName = parentObjectName(schema, viewOrObjectName);
   const displayProperty = getDisplayProperty(schema, viewOrObjectName);
   return queryOptions({
@@ -48,7 +48,7 @@ export function displayNameQuery(schema: Schema, viewOrObjectName: string, id: s
   });
 }
 
-export function objectOptionsQuery(schema: Schema, viewOrObjectName: string) {
+function objectOptionsQuery(schema: Schema, viewOrObjectName: string) {
   const objectName = parentObjectName(schema, viewOrObjectName);
   const displayProperty = getDisplayProperty(schema, viewOrObjectName);
   const filtersStatic = resolveList(schema, viewOrObjectName, objectName)?.filtersStatic;

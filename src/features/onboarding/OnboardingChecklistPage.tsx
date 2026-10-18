@@ -184,7 +184,7 @@ export function OnboardingChecklistPage() {
           <CardDescription>
             {t(
               'onboarding.moreDescription',
-              'DNS authentication docs and related settings. The Enterprise Dashboard and Delivery tests cover live metrics and outbound diagnostics.',
+              'DNS authentication docs and related settings. The Delivery test covers outbound diagnostics.',
             )}
           </CardDescription>
         </CardHeader>

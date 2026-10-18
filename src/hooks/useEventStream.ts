@@ -13,7 +13,7 @@ import {
   type StreamStatus,
 } from '@/services/sse';
 
-export type StartStreamOptions<T> = Omit<EventStreamOptions<T>, 'onStatus'>;
+type StartStreamOptions<T> = Omit<EventStreamOptions<T>, 'onStatus'>;
 
 export interface UseEventStream<T> {
   status: StreamStatus;

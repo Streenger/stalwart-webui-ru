@@ -44,7 +44,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-export function escapeJsonPointerToken(key: string): string {
+function escapeJsonPointerToken(key: string): string {
   return key.replace(/~/g, '~0').replace(/\//g, '~1');
 }
 

@@ -6,7 +6,7 @@
 
 import type { FieldType } from '@/types/schema';
 
-export type LabelMode = 'control' | 'group' | 'none';
+type LabelMode = 'control' | 'group' | 'none';
 
 export interface WidgetTraits {
   labelMode: LabelMode;

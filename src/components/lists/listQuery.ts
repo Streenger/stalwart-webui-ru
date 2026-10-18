@@ -11,7 +11,7 @@ import type { Field, List } from '@/types/schema';
 import { clientSortableNames, fetchProperties, isClientOnlyFilter } from './syntheticColumns';
 import type { ListSort, ListUrlState } from './listUrlState';
 
-export const LIST_PAGE_SIZE = 25;
+const LIST_PAGE_SIZE = 25;
 
 export type ListItem = Record<string, unknown>;
 

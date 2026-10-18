@@ -13,7 +13,7 @@ function baseLanguage(tag: string): string {
   return tag.toLowerCase().split(/[-_]/)[0];
 }
 
-export function getFormatLocale(): string {
+function getFormatLocale(): string {
   const nav = typeof navigator !== 'undefined' ? (navigator.languages ?? [navigator.language]) : [];
   const lang = i18next.resolvedLanguage || i18next.language;
   if (!lang || lang === 'cimode') return nav[0] || 'en';
@@ -48,22 +48,6 @@ function dateFormat(options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
 
 export function formatNumber(value: number, options?: Intl.NumberFormatOptions): string {
   return numberFormat(options).format(value);
-}
-
-export function formatCompactNumber(value: number): string {
-  if (Number.isInteger(value) && Math.abs(value) < 1000) return formatNumber(value);
-  return formatNumber(value, {
-    notation: Math.abs(value) >= 1000 ? 'compact' : 'standard',
-    maximumFractionDigits: 1,
-  });
-}
-
-export function formatPercent(value: number, fractionDigits = 1): string {
-  return formatNumber(value / 100, {
-    style: 'percent',
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-  });
 }
 
 const NO_VALUE = '\u2013';
@@ -146,17 +130,3 @@ export function formatDateTime(value: DateInput, timeStyle: DateTimeStyle = 'sho
   return dateFormat({ dateStyle: 'medium', timeStyle }).format(d);
 }
 
-export function formatDate(value: DateInput, options: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }): string {
-  const d = toDate(value);
-  if (!d) return String(value);
-  return dateFormat(options).format(d);
-}
-
-export function formatTime(value: DateInput, options: { seconds?: boolean; milliseconds?: boolean } = {}): string {
-  const d = toDate(value);
-  if (!d) return String(value);
-  const opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
-  if (options.seconds || options.milliseconds) opts.second = '2-digit';
-  if (options.milliseconds) opts.fractionalSecondDigits = 3;
-  return dateFormat(opts).format(d);
-}

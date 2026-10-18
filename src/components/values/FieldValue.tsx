@@ -237,7 +237,7 @@ function SummaryText({
   );
 }
 
-export function EmbeddedSummaryValue({
+function EmbeddedSummaryValue({
   schema,
   objectName,
   value,
@@ -282,7 +282,7 @@ function objectEntries(schema: Schema, objectName: string, data: Record<string, 
   return entries;
 }
 
-export function ObjectValue({
+function ObjectValue({
   schema,
   objectName,
   value,

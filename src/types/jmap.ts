@@ -4,11 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
-export interface JmapRequest {
-  using: string[];
-  methodCalls: JmapMethodCall[];
-}
-
 export type JmapMethodCall = [string, Record<string, unknown>, string];
 
 export interface JmapResponse {

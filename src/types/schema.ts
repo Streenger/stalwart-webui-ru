@@ -15,7 +15,7 @@ export interface Schema {
   layouts: Layout[];
 }
 
-export type ObjectType = ObjectTypeSingleton | ObjectTypeObject | ObjectTypeView;
+type ObjectType = ObjectTypeSingleton | ObjectTypeObject | ObjectTypeView;
 
 export interface ObjectTypeSingleton {
   type: 'singleton';
@@ -31,19 +31,19 @@ export interface ObjectTypeObject {
   enterprise?: boolean;
 }
 
-export interface ObjectTypeView {
+interface ObjectTypeView {
   type: 'view';
   objectName: string;
 }
 
-export type ObjectSchema = ObjectSchemaSingle | ObjectSchemaMultiple;
+type ObjectSchema = ObjectSchemaSingle | ObjectSchemaMultiple;
 
-export interface ObjectSchemaSingle {
+interface ObjectSchemaSingle {
   type: 'single';
   schemaName: string;
 }
 
-export interface ObjectSchemaMultiple {
+interface ObjectSchemaMultiple {
   type: 'multiple';
   variants: ObjectVariant[];
 }
@@ -66,7 +66,7 @@ export interface Field {
   enterprise?: boolean;
 }
 
-export type FieldUpdate = 'mutable' | 'immutable' | 'serverSet';
+type FieldUpdate = 'mutable' | 'immutable' | 'serverSet';
 
 export type FieldType =
   | FieldTypeString
@@ -152,45 +152,45 @@ export interface FieldTypeMap {
 
 export type ScalarType = ScalarTypeString | ScalarTypeObjectId | ScalarTypeEnum;
 
-export interface ScalarTypeString {
+interface ScalarTypeString {
   type: 'string';
   format: StringFormat;
   minLength?: number;
   maxLength?: number;
 }
 
-export interface ScalarTypeObjectId {
+interface ScalarTypeObjectId {
   type: 'objectId';
   objectName: string;
 }
 
-export interface ScalarTypeEnum {
+interface ScalarTypeEnum {
   type: 'enum';
   enumName: string;
 }
 
 export type MapValueType = MapValueTypeString | MapValueTypeNumber | MapValueTypeEnum | MapValueTypeObject;
 
-export interface MapValueTypeString {
+interface MapValueTypeString {
   type: 'string';
   format: StringFormat;
   minLength?: number;
   maxLength?: number;
 }
 
-export interface MapValueTypeNumber {
+interface MapValueTypeNumber {
   type: 'number';
   format: NumberFormat;
   min?: number;
   max?: number;
 }
 
-export interface MapValueTypeEnum {
+interface MapValueTypeEnum {
   type: 'enum';
   enumName: string;
 }
 
-export interface MapValueTypeObject {
+interface MapValueTypeObject {
   type: 'object';
   objectName: string;
 }
@@ -239,49 +239,49 @@ export interface Column {
 
 export type MassAction = MassActionSetProperty | MassActionDelete | MassActionSeparator;
 
-export interface MassActionSetProperty {
+interface MassActionSetProperty {
   type: 'setProperty';
   label: string;
   properties: Record<string, unknown>;
 }
 
-export interface MassActionDelete {
+interface MassActionDelete {
   type: 'delete';
   label: string;
 }
 
-export interface MassActionSeparator {
+interface MassActionSeparator {
   type: 'separator';
 }
 
 export type ItemAction =
   ItemActionDelete | ItemActionSetProperty | ItemActionQuery | ItemActionView | ItemActionSeparator;
 
-export interface ItemActionDelete {
+interface ItemActionDelete {
   type: 'delete';
   label: string;
 }
 
-export interface ItemActionSetProperty {
+interface ItemActionSetProperty {
   type: 'setProperty';
   label: string;
   properties: Record<string, unknown>;
 }
 
-export interface ItemActionQuery {
+interface ItemActionQuery {
   type: 'query';
   label: string;
   objectName: string;
   fieldName: string;
 }
 
-export interface ItemActionView {
+interface ItemActionView {
   type: 'view';
   label: string;
   objectName: string;
 }
 
-export interface ItemActionSeparator {
+interface ItemActionSeparator {
   type: 'separator';
 }
 
@@ -346,7 +346,7 @@ export interface Layout {
 
 export type LayoutItem = LayoutItemContainer | LayoutItemLink;
 
-export interface LayoutItemContainer {
+interface LayoutItemContainer {
   container: {
     name: string;
     icon: string;
@@ -354,7 +354,7 @@ export interface LayoutItemContainer {
   };
 }
 
-export interface LayoutItemLink {
+interface LayoutItemLink {
   link: {
     name: string;
     icon: string;
@@ -364,13 +364,13 @@ export interface LayoutItemLink {
 
 export type LayoutSubItem = LayoutSubItemContainer | LayoutSubItemLink;
 
-export interface LayoutSubItemContainer {
+interface LayoutSubItemContainer {
   type: 'container';
   name: string;
   items: LayoutSubItem[];
 }
 
-export interface LayoutSubItemLink {
+interface LayoutSubItemLink {
   type: 'link';
   name: string;
   viewName: string;

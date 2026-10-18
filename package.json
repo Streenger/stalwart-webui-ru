@@ -1,7 +1,7 @@
 {
   "name": "stalwart-webui-ru",
   "private": true,
-  "version": "2.1.0-ru.1",
+  "version": "2.2.0-ru.1",
   "description": "Stalwart WebUI (русская сборка)",
   "type": "module",
   "scripts": {
@@ -16,8 +16,7 @@
     "dev:server:down": "docker compose down",
     "dev:server:logs": "docker compose logs -f stalwart",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@codemirror/language": "^6.12.4",
@@ -39,7 +38,6 @@
     "@radix-ui/react-separator": "^1.2.0",
     "@radix-ui/react-slot": "^1.5.0",
     "@radix-ui/react-switch": "^1.4.1",
-    "@radix-ui/react-tabs": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.4.1",
     "@tanstack/react-query": "^5.104.2",
     "@types/qrcode": "^1.5.6",
@@ -56,14 +54,12 @@
     "react-i18next": "^17.0.16",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.4",
-    "recharts": "^3.10.1",
     "tailwind-merge": "^3.7.0",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.63.0",
     "@rolldown/plugin-babel": "^0.2.4",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query-devtools": "^5.104.2",

@@ -30,7 +30,6 @@ export function OnboardingNavGate() {
   const { section, '*': splat } = useParams<{ section?: string; '*': string }>();
   const hasObjectPermission = useAccountStore((s) => s.hasObjectPermission);
   const permissions = useAccountStore((s) => s.permissions);
-  const edition = useAccountStore((s) => s.edition);
   const showOnboardingNav = useSchemaStore((s) => s.showOnboardingNav);
   const hideOnboardingNav = useSchemaStore((s) => s.hideOnboardingNav);
   const isSchemaLoaded = useSchemaStore((s) => s.isLoaded);
@@ -65,7 +64,7 @@ export function OnboardingNavGate() {
 
       for (const layout of layouts) {
         const link =
-          findFirstAccessibleLinkInLayout(schema, layout, edition, canGet, hasPerm) ??
+          findFirstAccessibleLinkInLayout(schema, layout, canGet, hasPerm) ??
           findFirstVisibleLinkInLayout(schema, layout, canGet, hasPerm);
         if (!link || link === ONBOARDING_VIEW_NAME) continue;
         setActiveSection(layout.name);
@@ -88,7 +87,6 @@ export function OnboardingNavGate() {
     hideOnboardingNav,
     onOnboardingPage,
     permissions,
-    edition,
     setActiveSection,
     navigate,
     section,

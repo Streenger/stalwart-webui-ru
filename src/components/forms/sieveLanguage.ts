@@ -62,11 +62,11 @@ const sieveWithBuiltins: StreamParser<unknown> = {
   },
 };
 
-export const sieveLanguage = StreamLanguage.define(sieveWithBuiltins);
+const sieveLanguage = StreamLanguage.define(sieveWithBuiltins);
 
 // Colors reuse the app's existing chart palette tokens (already tuned per
 // light/dark and every color theme) instead of hardcoding new colors.
-export const sieveHighlightStyle = HighlightStyle.define([
+const sieveHighlightStyle = HighlightStyle.define([
   { tag: tags.keyword, color: 'hsl(var(--chart-1))', fontWeight: 600 },
   { tag: tags.standard(tags.variableName), color: 'hsl(var(--chart-1))' },
   { tag: tags.atom, color: 'hsl(var(--chart-4))' },
@@ -86,7 +86,7 @@ function isCommentOrString(state: EditorState, pos: number): boolean {
 // grammar to lean on since StreamLanguage doesn't build a real parse tree.
 // Depth-counts brace characters, skipping any that fall inside a string or
 // comment token per the tokenizer's own classification.
-export const sieveBraceFold = foldService.of((state, lineStart, lineEnd) => {
+const sieveBraceFold = foldService.of((state, lineStart, lineEnd) => {
   const openIdx = state.doc.sliceString(lineStart, lineEnd).indexOf('{');
   if (openIdx === -1) return null;
   const openPos = lineStart + openIdx;
@@ -108,7 +108,7 @@ export const sieveBraceFold = foldService.of((state, lineStart, lineEnd) => {
 // Matches the shadcn Textarea look (border, radius, focus ring) so the editor
 // blends in next to plain fields, and tracks the app's CSS variables so it
 // follows light/dark mode and every color theme automatically.
-export const sieveEditorTheme = EditorView.theme({
+const sieveEditorTheme = EditorView.theme({
   '&': {
     fontSize: '0.75rem',
     color: 'var(--foreground)',

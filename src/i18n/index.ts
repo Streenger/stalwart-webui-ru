@@ -12,7 +12,7 @@ import ru from './ru.json';
 const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
 
 // Russian fork: the interface language is Russian unless the account locale says otherwise.
-export const DEFAULT_LANGUAGE = 'ru';
+const DEFAULT_LANGUAGE = 'ru';
 
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en }, ru: { translation: ru } },

@@ -64,14 +64,14 @@ async function performRefresh(): Promise<void> {
     .setTokens(data.access_token, data.refresh_token ?? refreshToken, data.expires_in ?? Number.NaN, tokenEndpoint);
 }
 
-export function refreshAccessToken(): Promise<void> {
+function refreshAccessToken(): Promise<void> {
   refreshPromise ??= performRefresh().finally(() => {
     refreshPromise = null;
   });
   return refreshPromise;
 }
 
-export async function readErrorBody(response: Response): Promise<unknown> {
+async function readErrorBody(response: Response): Promise<unknown> {
   let text: string;
   try {
     text = await response.text();

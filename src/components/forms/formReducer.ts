@@ -6,7 +6,7 @@
 
 import { changedKeys, valuesEqual, type FieldErrors, type FieldValues } from '@/components/forms/formLogic';
 
-export interface CreatedResult {
+interface CreatedResult {
   id: string;
   values: FieldValues;
 }

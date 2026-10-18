@@ -43,6 +43,3 @@ export function canAccessView(
   return checkers.hasObjectPermission(resolved.permissionPrefix, action);
 }
 
-export function isCommunityEdition(edition: string): boolean {
-  return edition === 'community';
-}

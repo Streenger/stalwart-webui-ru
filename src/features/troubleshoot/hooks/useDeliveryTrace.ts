@@ -9,7 +9,7 @@ import { useEventStream } from '@/hooks/useEventStream';
 import { parseDeliveryBatch, type DeliveryBatch } from '../stages';
 import type { DeliveryStage } from '../types';
 
-export const DELIVERY_TRACE_TIMEOUT_MS = 120_000;
+const DELIVERY_TRACE_TIMEOUT_MS = 120_000;
 
 export interface DeliveryRun {
   target: string;

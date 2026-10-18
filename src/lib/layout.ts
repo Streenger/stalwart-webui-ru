@@ -6,7 +6,6 @@
 
 import type { Layout, LayoutSubItem, Schema } from '@/types/schema';
 import { resolveObject } from '@/lib/schemaResolver';
-import { isCommunityEdition } from '@/lib/permissions';
 
 export type CanGet = (permissionPrefix: string) => boolean;
 export type HasPermission = (permission: string) => boolean;
@@ -121,26 +120,13 @@ export function findFirstVisibleLinkInLayout(
   return findFirstLink(layout, (viewName) => isLinkVisible(schema, viewName, canGet, hasPerm));
 }
 
-export function isLinkAccessible(
-  schema: Schema,
-  viewName: string,
-  edition: string,
-  canGet: CanGet,
-  hasPerm?: HasPermission,
-): boolean {
-  if (!isLinkVisible(schema, viewName, canGet, hasPerm)) return false;
-  if (isCommunityEdition(edition) && isLinkEnterprise(schema, viewName)) return false;
-  return true;
-}
-
 export function findFirstAccessibleLinkInLayout(
   schema: Schema,
   layout: Layout,
-  edition: string,
   canGet: CanGet,
   hasPerm?: HasPermission,
 ): string | null {
-  return findFirstLink(layout, (viewName) => isLinkAccessible(schema, viewName, edition, canGet, hasPerm));
+  return findFirstLink(layout, (viewName) => isLinkVisible(schema, viewName, canGet, hasPerm));
 }
 
 /**
@@ -151,15 +137,14 @@ export function findFirstAccessibleLinkInLayout(
 export function findPreferredDefaultLinkInLayout(
   schema: Schema,
   layout: Layout,
-  edition: string,
   canGet: CanGet,
   hasPerm?: HasPermission,
   overviewViewName = 'CustomComponent/Overview',
 ): string | null {
-  if (layoutContainsLink(layout, overviewViewName) && isLinkAccessible(schema, overviewViewName, edition, canGet, hasPerm)) {
+  if (layoutContainsLink(layout, overviewViewName) && isLinkVisible(schema, overviewViewName, canGet, hasPerm)) {
     return overviewViewName;
   }
-  return findFirstAccessibleLinkInLayout(schema, layout, edition, canGet, hasPerm);
+  return findFirstAccessibleLinkInLayout(schema, layout, canGet, hasPerm);
 }
 
 export function visibleLayouts(schema: Schema, canGet: CanGet, hasPerm?: HasPermission): Layout[] {

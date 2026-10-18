@@ -24,8 +24,6 @@ export const REPORT_SUMMARY_COLUMNS = {
   arfFeedbackType: 'arfFeedbackType',
 } as const;
 
-export type ReportSummaryColumn = (typeof REPORT_SUMMARY_COLUMNS)[keyof typeof REPORT_SUMMARY_COLUMNS];
-
 const REPORT_SUMMARY_COLUMN_SET = new Set<string>(Object.values(REPORT_SUMMARY_COLUMNS));
 
 export function isReportSummaryColumn(name: string): boolean {

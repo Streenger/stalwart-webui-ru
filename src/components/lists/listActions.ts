@@ -11,12 +11,11 @@ import { filteredListSearch } from './listUrlState';
 
 export interface ActionPermissions {
   hasObjectPermission: (permissionPrefix: string, action: ObjectAction) => boolean;
-  isCommunity: boolean;
 }
 
 export type ResolvedItemAction =
   | { key: string; kind: 'separator' }
-  | { key: string; kind: 'navigate'; label: string; objectName: string; fieldName?: string; locked: boolean }
+  | { key: string; kind: 'navigate'; label: string; objectName: string; fieldName?: string }
   | { key: string; kind: 'mutation'; action: Extract<ItemAction, { type: 'delete' | 'setProperty' }> };
 
 function actionIdentity(action: ItemAction | MassAction): string {
@@ -32,7 +31,7 @@ function actionIdentity(action: ItemAction | MassAction): string {
   }
 }
 
-export function withStableKeys<T extends ItemAction | MassAction>(actions: readonly T[]): { key: string; action: T }[] {
+function withStableKeys<T extends ItemAction | MassAction>(actions: readonly T[]): { key: string; action: T }[] {
   const seen = new Map<string, number>();
   return actions.map((action) => {
     const base = actionIdentity(action);
@@ -42,7 +41,7 @@ export function withStableKeys<T extends ItemAction | MassAction>(actions: reado
   });
 }
 
-export function trimSeparators<T>(entries: T[], isSep: (entry: T) => boolean): T[] {
+function trimSeparators<T>(entries: T[], isSep: (entry: T) => boolean): T[] {
   const out: T[] = [];
   for (const entry of entries) {
     if (isSep(entry) && (out.length === 0 || isSep(out[out.length - 1]))) continue;
@@ -75,9 +74,8 @@ export function resolveItemActions(
       case 'query': {
         const target = resolveObject(schema, action.objectName);
         if (!target) break;
-        // Fork: Enterprise-only targets are hidden instead of shown as locked.
+        // Форк: цели Enterprise скрыты.
         if (target.enterprise) break;
-        const locked = false;
         if (!perms.hasObjectPermission(target.permissionPrefix, 'Get')) break;
         out.push({
           key,
@@ -85,7 +83,6 @@ export function resolveItemActions(
           label: action.label,
           objectName: action.objectName,
           fieldName: action.type === 'query' ? action.fieldName : undefined,
-          locked,
         });
         break;
       }

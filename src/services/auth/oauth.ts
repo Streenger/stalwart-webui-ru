@@ -14,7 +14,7 @@ const SCOPES_OVERRIDE = import.meta.env.VITE_OAUTH_SCOPES as string | undefined;
 
 const SESSION_PREFIX = 'stalwart-oauth-';
 
-export interface DiscoveryResponse {
+interface DiscoveryResponse {
   authorization_endpoint: string;
   token_endpoint: string;
   end_session_endpoint?: string;
@@ -24,7 +24,7 @@ export interface DiscoveryResponse {
   stalwart_required_scopes?: string[];
 }
 
-export function selectScopes(
+function selectScopes(
   discovery: Pick<DiscoveryResponse, 'scopes_supported' | 'stalwart_required_scopes'>,
   override: string | undefined = SCOPES_OVERRIDE,
 ): string {
@@ -37,7 +37,7 @@ export function selectScopes(
   return discovery.scopes_supported?.includes('openid') ? 'openid' : '';
 }
 
-export async function discover(username: string): Promise<DiscoveryResponse> {
+async function discover(username: string): Promise<DiscoveryResponse> {
   const url = `${getApiBaseUrl()}/api/discover/${encodeURIComponent(username)}`;
   const response = await fetch(url);
   if (!response.ok) {
@@ -54,7 +54,7 @@ export async function discover(username: string): Promise<DiscoveryResponse> {
 
 const UNRESERVED = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
 
-export function generateCodeVerifier(length: number = 64): string {
+function generateCodeVerifier(length: number = 64): string {
   if (length < 43 || length > 128) {
     throw new Error(`code_verifier length must be 43-128, got ${length}`);
   }
@@ -81,7 +81,7 @@ async function sha256(data: Uint8Array<ArrayBuffer>): Promise<Uint8Array> {
   return fallback(data);
 }
 
-export async function generateCodeChallenge(verifier: string): Promise<{ challenge: string; method: 'S256' }> {
+async function generateCodeChallenge(verifier: string): Promise<{ challenge: string; method: 'S256' }> {
   const digest = await sha256(new TextEncoder().encode(verifier));
   return { challenge: base64UrlEncode(digest), method: 'S256' };
 }

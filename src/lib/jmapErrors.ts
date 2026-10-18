@@ -68,7 +68,7 @@ export function friendlySetError(err: JmapSetError): string {
   }
 }
 
-export function friendlyMethodError(err: JmapMethodError): string {
+function friendlyMethodError(err: JmapMethodError): string {
   if (err.description) return err.description;
   switch (err.type) {
     case 'forbidden':

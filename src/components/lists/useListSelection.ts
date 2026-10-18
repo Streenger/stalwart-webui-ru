@@ -12,7 +12,7 @@ interface SelectionState {
   allMatching: boolean;
 }
 
-export type PageSelectionState = 'none' | 'some' | 'all';
+type PageSelectionState = 'none' | 'some' | 'all';
 
 export interface ListSelection {
   selectedIds: string[];

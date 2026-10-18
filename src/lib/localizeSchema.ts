@@ -33,7 +33,7 @@ const TEXT_KEYS = new Set([
 const SKIP_ENUMS = new Set(['Locale', 'TimeZone']);
 
 // Russian regional defaults, applied to form defaults.
-export const RU_FIELD_DEFAULTS: Record<string, Record<string, unknown>> = {
+const RU_FIELD_DEFAULTS: Record<string, Record<string, unknown>> = {
   'x:UserAccount': { locale: 'ru-RU', timeZone: 'Europe/Moscow' },
   'x:GroupAccount': { locale: 'ru-RU', timeZone: 'Europe/Moscow' },
   'x:AccountSettings': { locale: 'ru-RU', timeZone: 'Europe/Moscow' },

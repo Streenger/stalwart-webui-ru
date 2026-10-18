@@ -12,9 +12,6 @@ export interface SidebarNavContextValue {
   sectionName: string;
   pathname: string;
   isVisible: (viewName: string) => boolean;
-  isLocked: (viewName: string) => boolean;
-  openUpsell: () => void;
-  lockedHintId: string;
 }
 
 export const SidebarNavContext = createContext<SidebarNavContextValue | null>(null);

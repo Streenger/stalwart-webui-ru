@@ -22,7 +22,7 @@ export function isMissingValue(value: unknown): boolean {
   return value === undefined || value === null || value === '';
 }
 
-export function isSecretField(field: Field): boolean {
+function isSecretField(field: Field): boolean {
   return field.type.type === 'string' && (field.type.format === 'secret' || field.type.format === 'secretText');
 }
 

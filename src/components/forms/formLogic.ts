@@ -44,7 +44,7 @@ export function changedKeys(original: FieldValues, current: FieldValues): Set<st
   return changed;
 }
 
-export function isRequiredEligible(type: FieldType): boolean {
+function isRequiredEligible(type: FieldType): boolean {
   switch (type.type) {
     case 'string':
     case 'number':
@@ -247,7 +247,7 @@ export function formFieldLabels(...forms: (Form | null | undefined)[]): Map<stri
   return labels;
 }
 
-export function referencedObjectNames(type: FieldType): string[] {
+function referencedObjectNames(type: FieldType): string[] {
   switch (type.type) {
     case 'objectId':
     case 'object':
@@ -285,7 +285,7 @@ export function filterAccessibleFields(
 
 export const VARIANT_FIELD = '@type';
 
-export interface RenderableField {
+interface RenderableField {
   formField: FormField;
   field: Field | null;
 }

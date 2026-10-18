@@ -22,7 +22,7 @@ import type { RunnableMassAction } from './MassActionBar';
 
 type MutationItemAction = Extract<ItemAction, { type: 'delete' | 'setProperty' }>;
 
-export interface MassActionTarget {
+interface MassActionTarget {
   ids: string[];
   allMatching: boolean;
   filter: Record<string, unknown> | undefined;

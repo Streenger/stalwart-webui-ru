@@ -9,7 +9,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/authStore';
 import { useSchemaStore } from '@/stores/schemaStore';
-import { useAccountStore } from '@/stores/accountStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useSessionInit } from '@/data/session';
 import { errorMessage } from '@/lib/jmapErrors';
@@ -21,7 +20,7 @@ import { LoadingFallback } from '@/components/common/LoadingFallback';
 import {
   findFirstVisibleLinkInLayout,
   findPreferredDefaultLinkInLayout,
-  isLinkAccessible,
+  isLinkVisible,
   layoutContainsLink,
   visibleLayouts,
 } from '@/lib/layout';
@@ -52,8 +51,6 @@ export default function AdminPanel() {
   const schema = useSchemaStore((s) => s.schema);
 
   const { viewName, id } = parseAdminRoute(splat, (name) => !!schema && resolveObject(schema, name) !== null);
-
-  const edition = useAccountStore((s) => s.edition);
   const activeAccountId = useAuthStore((s) => s.activeAccountId);
   const setActiveSection = useUIStore((s) => s.setActiveSection);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
@@ -67,7 +64,7 @@ export default function AdminPanel() {
   const pageTitle = useMemo(() => {
     if (section === 'Appearance') return t('appearance.label', 'Appearance');
     if (section === 'Changelog') return t('changelog.label', 'Changelog');
-    if (!section) return t('dashboard.title', 'Dashboard');
+    if (!section) return 'Stalwart';
     if (!viewName) return section;
     let label: string | undefined;
     for (const entry of searchIndex) {
@@ -97,7 +94,7 @@ export default function AdminPanel() {
     const layouts = visibleLayouts(schema, canGet, hasPerm);
     const pickDefault = (): { layoutName: string; link: string | null } | null => {
       for (const layout of layouts) {
-        const link = findPreferredDefaultLinkInLayout(schema, layout, edition, canGet, hasPerm, OVERVIEW_VIEW_NAME);
+        const link = findPreferredDefaultLinkInLayout(schema, layout, canGet, hasPerm, OVERVIEW_VIEW_NAME);
         if (link) return { layoutName: layout.name, link };
       }
       if (layouts[0]) {
@@ -120,7 +117,7 @@ export default function AdminPanel() {
       return;
     }
 
-    if (section && viewName && !isLinkAccessible(schema, viewName, edition, canGet, hasPerm)) {
+    if (section && viewName && !isLinkVisible(schema, viewName, canGet, hasPerm)) {
       const fallback = pickDefault();
       if (fallback && (fallback.layoutName !== section || fallback.link !== viewName)) {
         redirectTo(fallback.layoutName, fallback.link);
@@ -137,7 +134,7 @@ export default function AdminPanel() {
 
     if (section) {
       const ownLayout = layouts.find((l) => l.name.toLowerCase() === section.toLowerCase());
-      const ownLink = ownLayout ? sectionLandingLink(schema, ownLayout, edition, canGet, hasPerm) : null;
+      const ownLink = ownLayout ? sectionLandingLink(schema, ownLayout, canGet, hasPerm) : null;
       if (ownLayout && ownLink) {
         redirectTo(ownLayout.name, ownLink);
       } else {
@@ -157,7 +154,6 @@ export default function AdminPanel() {
     activeSection,
     setActiveSection,
     navigate,
-    edition,
     canGet,
     hasPerm,
     isBootstrapMode,

@@ -6,7 +6,7 @@
 
 /** SCHEMA-DEVIATION: bulk-quota-change-action (see SCHEMA_DEVIATIONS.md) */
 
-export type PromptPropertyFormat = 'size';
+type PromptPropertyFormat = 'size';
 
 export interface PromptSetPropertyConfig {
   property: string;

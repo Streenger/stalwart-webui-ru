@@ -8,7 +8,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { jmapKeys, type ListPageParams } from '@/data/keys';
 import { fetchBlobText, jmapGetOne, jmapQueryAndGet, type JmapObject } from '@/services/jmap/client';
 
-export interface ListPage {
+interface ListPage {
   ids: string[];
   list: JmapObject[];
   total: number | null;
@@ -21,7 +21,7 @@ interface QueryTuning {
   refetchOnMount?: boolean | 'always';
 }
 
-export function jmapObjectQuery(objectName: string, id: string, properties?: string[]) {
+function jmapObjectQuery(objectName: string, id: string, properties?: string[]) {
   return queryOptions({
     queryKey: jmapKeys.object(objectName, id, properties),
     queryFn: ({ signal }) => jmapGetOne(objectName, id, properties, { signal }),
@@ -43,7 +43,7 @@ export function useJmapObject(
   });
 }
 
-export function jmapListQuery(objectName: string, params: ListPageParams) {
+function jmapListQuery(objectName: string, params: ListPageParams) {
   const { properties, ...query } = params;
   return queryOptions({
     queryKey: jmapKeys.list(objectName, params),

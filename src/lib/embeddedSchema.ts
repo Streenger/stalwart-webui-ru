@@ -54,14 +54,14 @@ export function resolveEmbedded(schema: Schema, objectName: string, value: unkno
   };
 }
 
-export function containsSecretMask(value: unknown): boolean {
+function containsSecretMask(value: unknown): boolean {
   if (value === SECRET_MASK) return true;
   if (Array.isArray(value)) return value.some(containsSecretMask);
   if (isRecord(value)) return Object.values(value).some(containsSecretMask);
   return false;
 }
 
-export function carryOverSharedValues(
+function carryOverSharedValues(
   from: Fields | null | undefined,
   to: Fields | null | undefined,
   current: unknown,

@@ -31,7 +31,7 @@ function isListOf(key: QueryKey, objectName: string): boolean {
   return key[1] === objectName && key[2] === 'list';
 }
 
-export async function invalidateObjectType(client: QueryClient, objectName: string): Promise<void> {
+async function invalidateObjectType(client: QueryClient, objectName: string): Promise<void> {
   client.removeQueries({ queryKey: jmapKeys.lists(objectName), type: 'inactive' });
   await Promise.all([
     client.invalidateQueries({ queryKey: jmapKeys.lists(objectName), refetchType: 'active' }),
@@ -55,7 +55,7 @@ export function useJmapSet(objectName: string | null | undefined) {
   });
 }
 
-export async function runBulkSet(objectName: string, vars: BulkVariables, signal?: AbortSignal): Promise<SetOutcome> {
+async function runBulkSet(objectName: string, vars: BulkVariables, signal?: AbortSignal): Promise<SetOutcome> {
   const ids = 'ids' in vars ? vars.ids : await jmapQueryAll(objectName, vars.query, { signal });
   const batchSize = Math.max(1, useAuthStore.getState().maxObjectsInSet);
   const outcome: SetOutcome = { succeeded: [], failed: {} };

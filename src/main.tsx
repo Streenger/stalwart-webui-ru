@@ -16,7 +16,6 @@ import NotFound from './pages/NotFound';
 import { AdminPanel } from './pages/AdminPanel.lazy';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { getBasePath } from './lib/basePath';
-import { applyAccessTokenOverride } from './stores/authStore';
 import { QueryProvider } from './data/QueryProvider';
 import { bindQueryClientToAuth, queryClient } from './data/queryClient';
 
@@ -50,7 +49,6 @@ import { bindQueryClientToAuth, queryClient } from './data/queryClient';
   } catch {}
 })();
 
-applyAccessTokenOverride();
 bindQueryClientToAuth(queryClient);
 
 const basePath = getBasePath();

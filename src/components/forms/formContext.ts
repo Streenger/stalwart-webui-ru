@@ -13,8 +13,6 @@ export interface FormContextValue {
   schema: Schema;
   mode: FormMode;
   readOnly: boolean;
-  hideEnterprise: boolean;
-  isCommunity: boolean;
   idPrefix: string;
   recordLabel: string;
   baseline: unknown;
@@ -39,11 +37,7 @@ export function useFieldScope(): FieldScope {
   return useContext(FieldScopeContext);
 }
 
-export function isEnterpriseLockedIn(ctx: FormContextValue, enterprise: boolean | undefined): boolean {
-  return !!enterprise && ctx.isCommunity;
-}
-
-export function fieldDomId(idPrefix: string, path: readonly string[]): string {
+function fieldDomId(idPrefix: string, path: readonly string[]): string {
   const suffix = path.map((p) => p.replace(/[^A-Za-z0-9_-]/g, '_')).join('-');
   return suffix ? `${idPrefix}-${suffix}` : idPrefix;
 }

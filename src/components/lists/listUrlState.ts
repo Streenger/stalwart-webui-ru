@@ -17,15 +17,15 @@ export interface ListUrlState {
   anchors: string[];
 }
 
-export const FILTER_PARAM_PREFIX = 'f.';
-export const SORT_PARAM = 'sort';
-export const SORT_DIR_PARAM = 'sortDir';
-export const ANCHORS_PARAM = 'after';
+const FILTER_PARAM_PREFIX = 'f.';
+const SORT_PARAM = 'sort';
+const SORT_DIR_PARAM = 'sortDir';
+const ANCHORS_PARAM = 'after';
 const ANCHOR_SEPARATOR = ',';
 const OP_SUFFIX = 'Op';
 const DEFAULT_OP = 'eq';
 
-export function normalizeFilters(values: Record<string, string>): Record<string, string> {
+function normalizeFilters(values: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(values)) {
     if (value === '' || value == null) continue;

@@ -7,7 +7,7 @@
 import { isMissingValue, isRequiredField, isUnchangedSecret } from '@/lib/fieldRules';
 import type { Fields, FormSection, ObjectVariant } from '@/types/schema';
 
-export interface ActionEntry {
+interface ActionEntry {
   variant: ObjectVariant;
   name: string;
 }
@@ -17,7 +17,7 @@ export interface ActionGroup {
   actions: ActionEntry[];
 }
 
-export function splitActionLabel(label: string): { group: string | null; name: string } {
+function splitActionLabel(label: string): { group: string | null; name: string } {
   const colon = label.indexOf(':');
   if (colon <= 0) return { group: null, name: label };
   return { group: label.slice(0, colon).trim(), name: label.slice(colon + 1).trim() };
