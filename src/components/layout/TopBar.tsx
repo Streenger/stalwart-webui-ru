@@ -23,6 +23,7 @@ import {
 import Logo from '@/components/common/Logo';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DynamicIcon } from '@/components/common/DynamicIcon';
+import { layoutLabel } from '@/lib/localizeSchema';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
 import { buildEndSessionUrl, getPostLogoutRedirectUri, revokeSessionTokens } from '@/services/auth/oauth';
@@ -142,7 +143,7 @@ export function TopBar() {
                       }}
                     >
                       <DynamicIcon name={layout.icon} className="mr-2 h-4 w-4" />
-                      {layout.name}
+                      {layoutLabel(layout.name)}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuGroup>

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
+import { layoutLabel } from '@/lib/localizeSchema';
 import { create } from 'zustand';
 import { layoutViewFor } from '@/lib/layout';
 import type { Schema, LayoutSubItem } from '@/types/schema';
@@ -63,11 +64,11 @@ function walkLayouts(schema: Schema): { viewToSection: Record<string, string>; l
           type: 'link',
           viewName: item.link.viewName,
           section: sectionName,
-          breadcrumb: `${sectionName} > ${item.link.name}`,
+          breadcrumb: `${layoutLabel(sectionName)} > ${item.link.name}`,
           icon: item.link.icon,
         });
       } else if ('container' in item) {
-        visit(item.container.items, sectionName, `${sectionName} > ${item.container.name}`);
+        visit(item.container.items, sectionName, `${layoutLabel(sectionName)} > ${item.container.name}`);
       }
     }
   }

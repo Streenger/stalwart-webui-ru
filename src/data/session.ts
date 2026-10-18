@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useSchemaStore } from '@/stores/schemaStore';
 import { useAccountStore } from '@/stores/accountStore';
 import { setLocale } from '@/i18n';
+import { localizeSchema } from '@/lib/localizeSchema';
 
 export interface SessionInfo {
   accounts: Record<string, { name: string; isPersonal: boolean }>;
@@ -42,19 +43,22 @@ export function parseSession(session: JmapSession): SessionInfo {
 }
 
 export async function initializeSession(signal?: AbortSignal): Promise<true> {
-  const [session, schema, account] = await Promise.all([
+  const [session, rawSchema, account] = await Promise.all([
     fetchSession(signal),
     fetchSchema(signal),
     fetchAccountInfo(signal),
   ]);
   const info = parseSession(session);
+  // Russian fork: translate the server-provided schema and apply Russian regional defaults.
+  const schema = await localizeSchema(rawSchema);
 
   useAuthStore
     .getState()
     .setSession(info.accounts, info.primaryAccountId, info.apiUrl, info.maxObjectsInGet, info.maxObjectsInSet);
   useSchemaStore.getState().setSchema(schema);
   useAccountStore.getState().setAccountInfo(account.permissions, account.edition, account.locale);
-  setLocale(account.locale);
+  // Russian fork: the admin interface is Russian by default; set localStorage 'stalwart.ui.lang' = 'en' to override.
+  setLocale(window.localStorage.getItem('stalwart.ui.lang') ?? 'ru');
   return true;
 }
 

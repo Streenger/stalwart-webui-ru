@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
+import { layoutLabel } from '@/lib/localizeSchema';
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -146,7 +147,7 @@ function SectionSwitcher({ layouts, activeSection }: { layouts: Layout[]; active
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label={target.name}
+                aria-label={layoutLabel(target.name)}
                 aria-pressed={isActive}
                 onClick={() => {
                   setActiveSection(target.name);
@@ -158,7 +159,7 @@ function SectionSwitcher({ layouts, activeSection }: { layouts: Layout[]; active
                 <DynamicIcon name={target.icon} className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="top">{target.name}</TooltipContent>
+            <TooltipContent side="top">{layoutLabel(target.name)}</TooltipContent>
           </Tooltip>
         );
       })}
@@ -208,7 +209,7 @@ export function Sidebar() {
           {t('enterprise.featureHint', 'Enterprise feature')}
         </span>
         <div className="flex-1 overflow-y-auto py-2 [scrollbar-width:thin]">
-          <nav aria-label={layout.name} className="flex flex-col gap-0.5 px-2">
+          <nav aria-label={layoutLabel(layout.name)} className="flex flex-col gap-0.5 px-2">
             <SidebarNavContext value={nav}>
               <NavNodes nodes={layoutNavNodes(layout)} depth={0} />
             </SidebarNavContext>

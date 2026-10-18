@@ -7,12 +7,16 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './en.json';
+import ru from './ru.json';
 
 const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
 
+// Russian fork: the interface language is Russian unless the account locale says otherwise.
+export const DEFAULT_LANGUAGE = 'ru';
+
 i18n.use(initReactI18next).init({
-  resources: { en: { translation: en } },
-  lng: navigator.language?.split('-')[0] || 'en',
+  resources: { en: { translation: en }, ru: { translation: ru } },
+  lng: DEFAULT_LANGUAGE,
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 });
