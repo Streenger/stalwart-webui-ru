@@ -75,8 +75,10 @@ export function resolveItemActions(
       case 'query': {
         const target = resolveObject(schema, action.objectName);
         if (!target) break;
-        const locked = !!target.enterprise && perms.isCommunity;
-        if (!locked && !perms.hasObjectPermission(target.permissionPrefix, 'Get')) break;
+        // Fork: Enterprise-only targets are hidden instead of shown as locked.
+        if (target.enterprise) break;
+        const locked = false;
+        if (!perms.hasObjectPermission(target.permissionPrefix, 'Get')) break;
         out.push({
           key,
           kind: 'navigate',

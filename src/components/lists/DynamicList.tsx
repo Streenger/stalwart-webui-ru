@@ -11,7 +11,6 @@ import { Loader2, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { EnterpriseUpsell } from '@/components/common/EnterpriseUpsell';
 import { useIsCommunity, usePermissionCheckers } from '@/hooks/usePermissions';
 import { useResolvedView } from '@/hooks/useResolvedView';
 import { layoutViewFor } from '@/lib/layout';
@@ -72,7 +71,6 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
   const viewToSection = useSchemaStore((s) => s.viewToSection);
   const checkers = usePermissionCheckers();
   const isCommunity = useIsCommunity();
-  const [upsellOpen, setUpsellOpen] = useState(false);
   const [confirm, setConfirm] = useState<PendingConfirm | null>(null);
 
   const obj = resolved.object;
@@ -268,7 +266,7 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
                   label={label}
                   hrefFor={(action) => itemActionHref(action, id, sectionFor, section, viewFor)}
                   onMutation={(entry) => confirmItemAction(entry, id, label)}
-                  onLocked={() => setUpsellOpen(true)}
+                  onLocked={() => {}}
                   disabled={actions.pending}
                 />
               )
@@ -308,7 +306,6 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
         onConfirm={() => confirm?.onConfirm()}
       />
 
-      <EnterpriseUpsell open={upsellOpen} onClose={() => setUpsellOpen(false)} />
     </div>
   );
 }

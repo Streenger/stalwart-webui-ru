@@ -79,13 +79,14 @@ export function FieldError({ id, error }: { id: string; error?: string }) {
 export function FieldRow({ field, formField, value, onChange, error, readOnly: forceReadOnly = false }: FieldRowProps) {
   const ctx = useFormContext();
   const scope = useFieldScope();
-  if (field.enterprise && ctx.hideEnterprise) return null;
+  if (field.enterprise) return null;
 
   const ft = field.type;
   const ids = fieldIds(ctx.idPrefix, [...scope.path, formField.name]);
   const topLevel = scope.path.length === 0;
   const referencesLocked =
     ft.type === 'objectId' && ctx.isCommunity && !!resolveObject(ctx.schema, ft.objectName)?.enterprise;
+  if (referencesLocked) return null;
   const locked = isEnterpriseLockedIn(ctx, field.enterprise);
   const readOnly =
     scope.readOnly ||

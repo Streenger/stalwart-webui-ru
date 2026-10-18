@@ -24,20 +24,9 @@ interface CustomComponentRule {
 
 const CUSTOM_COMPONENTS: Record<string, CustomComponentRule> = {
   LiveDelivery: { permission: 'liveDeliveryTest' },
-  // SPDX-SnippetBegin
-  // SPDX-FileCopyrightText: 2020 Stalwart Labs LLC <hello@stalw.art>
-  // SPDX-License-Identifier: LicenseRef-SEL
-  Dashboard: { permission: 'liveMetrics', backingObject: 'x:Metric' },
-  LiveTracing: { permission: 'liveTracing', enterprise: true },
-  // SPDX-SnippetEnd
 };
 
 function customComponentName(viewName: string): string | null {
-  // SPDX-SnippetBegin
-  // SPDX-FileCopyrightText: 2020 Stalwart Labs LLC <hello@stalw.art>
-  // SPDX-License-Identifier: LicenseRef-SEL
-  if (viewName.startsWith('Dashboard/')) return 'Dashboard';
-  // SPDX-SnippetEnd
   if (viewName.startsWith('CustomComponent/')) return viewName.slice('CustomComponent/'.length);
   return null;
 }
@@ -61,11 +50,17 @@ function checkSpecialLink(
   return { visible: permitted && readable, enterprise: rule.enterprise ?? backing?.enterprise ?? false };
 }
 
+// Fork: Enterprise-only views (dashboards, live tracing, tenants, ...) are removed from the Community build.
+const REMOVED_COMPONENTS = new Set(['Dashboard', 'LiveTracing']);
+
 export function isLinkVisible(schema: Schema, viewName: string, canGet: CanGet, hasPerm?: HasPermission): boolean {
+  if (viewName.startsWith('Dashboard/')) return false;
+  const component = customComponentName(viewName);
+  if (component !== null && REMOVED_COMPONENTS.has(component)) return false;
   const special = checkSpecialLink(schema, viewName, hasPerm, canGet);
-  if (special !== null) return special.visible;
+  if (special !== null) return special.visible && !special.enterprise;
   const resolved = resolveObject(schema, viewName);
-  return resolved !== null && canGet(resolved.permissionPrefix);
+  return resolved !== null && !resolved.enterprise && canGet(resolved.permissionPrefix);
 }
 
 export function isLinkEnterprise(schema: Schema, viewName: string): boolean {

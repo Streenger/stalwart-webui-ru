@@ -11,7 +11,6 @@ import { ChevronDown, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { DynamicIcon } from '@/components/common/DynamicIcon';
-import { EnterpriseUpsell } from '@/components/common/EnterpriseUpsell';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUIStore } from '@/stores/uiStore';
@@ -174,7 +173,6 @@ export function Sidebar() {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
   const { layouts, isVisible, isLocked } = useLayoutNavigation();
-  const [upsellOpen, setUpsellOpen] = useState(false);
   const lockedHintId = useId();
 
   useEffect(() => {
@@ -190,7 +188,7 @@ export function Sidebar() {
     pathname,
     isVisible,
     isLocked,
-    openUpsell: () => setUpsellOpen(true),
+    openUpsell: () => {},
     lockedHintId,
   };
 
@@ -219,7 +217,6 @@ export function Sidebar() {
 
         {layouts.length > 1 && <SectionSwitcher layouts={layouts} activeSection={activeSection} />}
 
-        <EnterpriseUpsell open={upsellOpen} onClose={() => setUpsellOpen(false)} />
       </aside>
     </>
   );
