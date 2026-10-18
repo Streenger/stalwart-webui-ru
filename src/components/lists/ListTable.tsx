@@ -131,6 +131,7 @@ export function ListTable({
                           column={col.name}
                           field={fields[col.name]}
                           value={value}
+                          item={item}
                         />
                       );
                       if (index === 0) {

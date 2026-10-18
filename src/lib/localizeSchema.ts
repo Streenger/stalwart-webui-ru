@@ -48,10 +48,11 @@ function loadDict(): Promise<Dict> {
 }
 
 let layoutLabels: Dict = {};
+let loadedDict: Dict = {};
 
 /** Display name of a top-level layout (Management, Settings, Account); falls back to the original. */
 export function layoutLabel(name: string): string {
-  return layoutLabels[name] ?? name;
+  return layoutLabels[name] ?? loadedDict[name] ?? name;
 }
 
 function translateDeep(value: unknown, dict: Dict, key?: string): unknown {
@@ -120,6 +121,7 @@ function timeZoneLabel(name: string, fallback: string): string {
 export async function localizeSchema(schema: Schema): Promise<Schema> {
   try {
     const dict = await loadDict();
+    loadedDict = dict;
     const out: Record<string, unknown> = { ...schema };
 
     for (const part of ['objects', 'schemas', 'fields', 'forms', 'lists'] as const) {

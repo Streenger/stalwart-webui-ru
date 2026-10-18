@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
-import { useState, type CSSProperties } from 'react';
+import { Suspense, lazy, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff } from 'lucide-react';
 import { useResetOnChange } from '@/hooks/useBufferedValue';
@@ -43,6 +43,10 @@ export function TextWidget(props: WidgetProps<FieldTypeString>) {
   );
 }
 
+// Редактор Sieve с подсветкой синтаксиса (CodeMirror) из форка LinkPhoenix/stalwart-webui-fork;
+// подгружается отдельным фрагментом, чтобы не утяжелять остальные страницы.
+const LazySieveEditor = lazy(() => import('@/components/forms/SieveEditor'));
+
 export function MultilineWidget(props: WidgetProps<FieldTypeString>) {
   const { type, formField, value, readOnly, control } = props;
   const commit = stringCommitter(props);
@@ -72,7 +76,11 @@ export function MultilineWidget(props: WidgetProps<FieldTypeString>) {
     );
   }
   if (type.format === 'sieve') {
-    return <BufferedTextarea {...common} rows={16} spellCheck={false} className="font-mono text-xs" />;
+    return (
+      <Suspense fallback={<BufferedTextarea {...common} rows={16} spellCheck={false} className="font-mono text-xs" />}>
+        <LazySieveEditor value={stringValue(value)} onCommit={commit} readOnly={readOnly} />
+      </Suspense>
+    );
   }
   return <BufferedTextarea {...common} rows={4} />;
 }

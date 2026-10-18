@@ -54,7 +54,8 @@
     "save": "Сохранить",
     "search": "Поиск",
     "searchPlaceholder": "Поиск...",
-    "yes": "Да"
+    "yes": "Да",
+    "showDescription": "Показать описание"
   },
   "deliveryTrace": {
     "attemptCount_one": "{{count}} попытка",
@@ -198,7 +199,11 @@
     "removeItemN": "Удалить элемент {{n}}",
     "showValue": "Показать значение",
     "unit": "Единица",
-    "unsupportedType": "Неподдерживаемый тип поля: {{type}}"
+    "unsupportedType": "Неподдерживаемый тип поля: {{type}}",
+    "active": "Активно",
+    "expandToFitContent": "Растянуть по содержимому",
+    "hour": "Час",
+    "minute": "Минута"
   },
   "filters": {
     "after": "После",
@@ -340,7 +345,53 @@
     "showingItems": "Показано элементов: {{count}}",
     "sortAscending": "Сортировать по возрастанию",
     "sortClear": "Сбросить сортировку",
-    "sortDescending": "Сортировать по убыванию"
+    "sortDescending": "Сортировать по убыванию",
+    "openItem": "Открыть: {{name}}",
+    "rowActions": "Действия для этого элемента",
+    "sortByColumn": "Сортировать по столбцу «{{column}}», сейчас: {{state}}",
+    "sortNone": "без сортировки",
+    "changeQuota": "Изменить квоту…",
+    "changeQuotaDescription_one": "Укажите новую максимальную квоту диска для {{count}} учётной записи.",
+    "changeQuotaDescription_few": "Укажите новую максимальную квоту диска для {{count}} учётных записей.",
+    "changeQuotaDescription_many": "Укажите новую максимальную квоту диска для {{count}} учётных записей.",
+    "changeQuotaDescription_other": "Укажите новую максимальную квоту диска для {{count}} учётных записей.",
+    "changeQuotaTitle": "Изменить квоту диска",
+    "comboboxEmptyText": "Ничего не найдено.",
+    "comboboxSearchPlaceholder": "Поиск...",
+    "csvNo": "Нет",
+    "csvYes": "Да",
+    "exportCsv": "Экспорт в CSV",
+    "exportSuccess": "Выгружено строк в CSV: {{count}}",
+    "exportFailed": "Не удалось выполнить экспорт",
+    "pageSize": "Строк на странице",
+    "exactMatchOnly": "Только точное совпадение",
+    "fetchAllHardCap": "Загрузка {{count}} подходящих строк в браузер отклонена (лимит {{cap}}). Сузьте фильтры или выгрузите меньший набор.",
+    "fetchAllWarn": "В браузер загружается строк: {{count}}. Это может занять время.",
+    "noFilterResults": "Нет результатов по этим фильтрам",
+    "noFilterResultsHint": "Текстовые фильтры требуют точного значения, а не частичного поиска.",
+    "moveColumnEarlier": "Сдвинуть левее",
+    "moveColumnLater": "Сдвинуть правее",
+    "refresh": "Обновить",
+    "refreshCooldown": "Подождите несколько секунд перед повторным обновлением",
+    "autoRefresh": "Автообновление",
+    "filterPresets": "Пресеты",
+    "filterPresetsEmpty": "Нет сохранённых пресетов",
+    "filterPresetSave": "Сохранить пресет",
+    "filterPresetDelete": "Удалить пресет",
+    "filterPresetNamePrompt": "Название пресета фильтров",
+    "problemsOnly": "Только проблемы",
+    "queueBacklogBody": "Чтобы разобраться с застрявшей или задержанной почтой, воспользуйтесь трассировкой доставки или журналом.",
+    "queueBacklogTitle": "Сообщений в очереди: {{count}}",
+    "queueEmptyBody": "Сообщений в ожидании нет. Если почта задерживается, проверьте трассировку доставки или журнал.",
+    "queueEmptyTitle": "Очередь доставки пуста",
+    "queueLinkDeliveryTrace": "Трассировка доставки",
+    "queueLinkLogs": "Записи журнала",
+    "unlimitedQuota": "∞",
+    "negativeQuotaInfoAria": "Почему объём диска отрицательный?",
+    "negativeQuotaTooltip": "Счётчик использования диска рассинхронизирован (часто после миграции или сброса). Запустите задачу: «Операции обслуживания учётной записи» → «Пересчитать использование квоты хранилища» для учётной записи. Или для всех: «Операции обслуживания хранилища» → «Сбросить все квоты пользователей».",
+    "quotaUsagePercent": "Квота использована",
+    "quotaNoLimit": "Без ограничений",
+    "quotaValueAria": "Размер квоты"
   },
   "login": {
     "continue": "Продолжить",
@@ -417,6 +468,141 @@
   "view": {
     "couldNotResolve": "Не удалось определить объект",
     "failedToLoad": "Не удалось загрузить",
-    "objectNotFound": "Объект не найден"
+    "objectNotFound": "Объект не найден",
+    "hideEmptyFields": "Скрыть пустые поля",
+    "showEmptyFields": "Показать пустые поля: {{count}}"
+  },
+  "appearance": {
+    "colorTheme": "Цветовая тема",
+    "colorThemeDescription": "Выберите акцентный цвет интерфейса.",
+    "comfortable": "Обычная",
+    "compact": "Компактная",
+    "corners": "Углы",
+    "cornersDescription": "Скруглённые или прямые углы. Действует для любой темы.",
+    "dark": "Тёмная",
+    "description": "Настройте внешний вид и поведение интерфейса.",
+    "label": "Оформление",
+    "light": "Светлая",
+    "listDensity": "Плотность списков",
+    "listDensityDescription": "Насколько плотно расположены строки в списках администратора.",
+    "mode": "Режим",
+    "modeDescription": "Переключение между светлым и тёмным режимом.",
+    "rounded": "Скруглённые",
+    "square": "Прямые",
+    "switchToDark": "Включить тёмный режим",
+    "switchToLight": "Включить светлый режим",
+    "theme": {
+      "amber": "Янтарная",
+      "default": "Стандартная",
+      "forest": "Лесная",
+      "ocean": "Океан",
+      "rose": "Розовая",
+      "stalwart": "Stalwart",
+      "teal": "Бирюзовая",
+      "violet": "Фиолетовая"
+    }
+  },
+  "changelog": {
+    "description": "Что нового в этой сборке, выпуск за выпуском.",
+    "label": "История изменений",
+    "officialNotice": "Официальный WebUI поддерживает команда Stalwart, он доступен по адресу"
+  },
+  "mainContent": {
+    "selectView": "Выберите раздел в боковой панели.",
+    "unknownComponent": "Неизвестный компонент: {{name}}",
+    "unknownView": "Неизвестный раздел: {{name}}"
+  },
+  "onboarding": {
+    "title": "Первые шаги",
+    "subtitle": "Короткий список проверок для нового сервера Stalwart. Выполнено {{done}} из {{total}}.",
+    "unknown": "Проверить не удалось: возможно, у вас нет прав на просмотр.",
+    "moreTitle": "Что дальше?",
+    "moreDescription": "Документация по аутентификации DNS и связанные настройки.",
+    "domain": {
+      "title": "Настроить домен",
+      "description": "Чтобы сервер принимал почту, нужно добавить и включить хотя бы один домен.",
+      "action": "Перейти к доменам"
+    },
+    "dkim": {
+      "title": "Настроить подпись DKIM",
+      "description": "Подпись DKIM позволяет принимающим серверам убедиться, что письмо действительно отправлено с вашего домена.",
+      "action": "Перейти к подписям DKIM"
+    },
+    "certificate": {
+      "title": "Установить действующий сертификат TLS",
+      "description": "Нужен для шифрованных подключений SMTP, IMAP и HTTPS. Проверяется наличие хотя бы одного неистёкшего сертификата.",
+      "action": "Перейти к сертификатам TLS"
+    },
+    "admin": {
+      "title": "Создать учётную запись администратора",
+      "description": "Для повседневного управления лучше использовать именованную учётную запись администратора, отдельную от аварийной.",
+      "action": "Перейти к учётным записям"
+    },
+    "optional": "Необязательно",
+    "dmarcReports": {
+      "title": "Начать получать отчёты DMARC",
+      "description": "Опубликуйте запись DMARC в DNS, отправляющую сводные отчёты на этот сервер. Необязательно, отчёты приходят не сразу.",
+      "action": "Перейти к отчётам DMARC"
+    },
+    "further": {
+      "spfTitle": "Опубликовать SPF",
+      "spfDescription": "Разрешите этому серверу отправлять почту от имени вашего домена (запись DNS TXT).",
+      "dmarcTitle": "Опубликовать DMARC",
+      "dmarcDescription": "Попросите получателей присылать вам результаты проверки подлинности.",
+      "spamTitle": "Проверить настройки спам-фильтра",
+      "spamDescription": "Настройте классификацию и списки, когда почта пойдёт потоком.",
+      "listenersTitle": "Проверить сетевые слушатели",
+      "listenersDescription": "Убедитесь, что слушатели SMTP, IMAP и HTTPS соответствуют тому, как сервер доступен снаружи.",
+      "openDocs": "Документация",
+      "open": "Открыть"
+    }
+  },
+  "overview": {
+    "title": "Обзор",
+    "subtitle": "Сводка по объектам каталога, готовности почты и отчётам.",
+    "refresh": "Обновить",
+    "refreshCooldown": "Подождите несколько секунд перед повторным обновлением",
+    "unavailable": "—",
+    "noPermission": "С вашими текущими правами нет доступных объектов для сводки.",
+    "certificatesDetail": "действующих: {{valid}} · истёкших: {{expired}}",
+    "certificatesValid": "действующих: {{count}}",
+    "countMissingTotal": "В ответе сервера нет значения количества.",
+    "countQueryRejected": "Сервер не смог выполнить запрос количества.",
+    "countRequestFailed": "Не удалось связаться с сервером. Попробуйте обновить обзор.",
+    "certificatesExpired": "истёкших: {{count}}",
+    "certificatesExpiring": "скоро истекают: {{count}}",
+    "reportProblemsDetail": "с проблемами: {{count}} в последних {{sample}}",
+    "queueBacklog": "Сообщений ожидает в очереди",
+    "attentionWarn": "Внимание",
+    "attentionDanger": "Требует внимания",
+    "sections": {
+      "directory": "Каталог",
+      "mailReadiness": "Готовность почты",
+      "access": "Доступ и приложения",
+      "reports": "Отчёты"
+    },
+    "cards": {
+      "users": "Пользователи",
+      "groups": "Группы",
+      "domains": "Домены",
+      "roles": "Роли",
+      "mailingLists": "Списки рассылки",
+      "dkim": "Подписи DKIM",
+      "certificates": "Сертификаты TLS",
+      "queuedMessages": "Сообщения в очереди",
+      "apiKeys": "Ключи API",
+      "oauthClients": "Клиенты OAuth",
+      "applications": "Веб-приложения",
+      "dmarcExternal": "DMARC (входящие)",
+      "dmarcInternal": "DMARC (исходящие)",
+      "tlsExternal": "Отчёты TLS (входящие)",
+      "tlsInternal": "Отчёты TLS (исходящие)",
+      "arf": "Отчёты ARF о нарушениях"
+    }
+  },
+  "webApplications": {
+    "activeWebUI": "Активный WebUI",
+    "version": "Версия",
+    "enabled": "Включено"
   }
 }

@@ -24,9 +24,11 @@ interface MassActionBarProps {
   count: number;
   disabled: boolean;
   onSelect: (action: RunnableMassAction) => void;
+  /** Массовая смена квоты диска (списки с синтетическим столбцом квоты). */
+  onChangeQuota?: () => void;
 }
 
-export function MassActionBar({ actions, count, disabled, onSelect }: MassActionBarProps) {
+export function MassActionBar({ actions, count, disabled, onSelect, onChangeQuota }: MassActionBarProps) {
   const { t } = useTranslation();
   return (
     <DropdownMenu>
@@ -37,6 +39,9 @@ export function MassActionBar({ actions, count, disabled, onSelect }: MassAction
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {onChangeQuota && (
+          <DropdownMenuItem onSelect={onChangeQuota}>{t('list.changeQuota', 'Change quota…')}</DropdownMenuItem>
+        )}
         {actions.map(({ key, action }) =>
           action.type === 'separator' ? (
             <DropdownMenuSeparator key={key} />

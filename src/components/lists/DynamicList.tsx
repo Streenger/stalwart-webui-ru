@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Plus } from 'lucide-react';
+import { Download, Loader2, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
@@ -17,6 +17,7 @@ import { layoutViewFor } from '@/lib/layout';
 import { canAccessView } from '@/lib/permissions';
 import { getDisplayProperty } from '@/lib/schemaResolver';
 import { useSchemaStore } from '@/stores/schemaStore';
+import { useUIStore } from '@/stores/uiStore';
 import type { List, Schema } from '@/types/schema';
 import type { ResolvedView } from '@/lib/schemaResolver';
 
@@ -30,6 +31,11 @@ import { SelectionBanner } from './SelectionBanner';
 import { itemActionHref, resolveItemActions, resolveMassActions, type ResolvedItemAction } from './listActions';
 import { getListFields, itemId, itemLabel } from './listQuery';
 import { useDynamicList } from './useDynamicList';
+import { clientSortableNames, QUOTA_USAGE_COLUMN } from './syntheticColumns';
+import { ChangeQuotaDialog } from './ChangeQuotaDialog';
+import { exportListCsv } from './listExport';
+import { toast } from '@/hooks/use-toast';
+import { errorMessage } from '@/lib/jmapErrors';
 import { useListActions } from './useListActions';
 import { useListSelection } from './useListSelection';
 
@@ -72,6 +78,8 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
   const checkers = usePermissionCheckers();
   const isCommunity = useIsCommunity();
   const [confirm, setConfirm] = useState<PendingConfirm | null>(null);
+  const [quotaOpen, setQuotaOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const obj = resolved.object;
   const objectName = obj.objectName;
@@ -100,6 +108,28 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
     hasObjectPermission: checkers.hasObjectPermission,
     isCommunity,
   });
+  const canChangeQuota =
+    isObject &&
+    !listState.clientMode &&
+    list.columns.some((c) => c.name === QUOTA_USAGE_COLUMN) &&
+    checkers.hasObjectPermission(obj.permissionPrefix, 'Update');
+  const exportCsv = async () => {
+    setExporting(true);
+    try {
+      await exportListCsv({
+        objectName,
+        columns: list.columns,
+        filter: listState.jmapFilter,
+        sort: listState.jmapSort,
+        filename: list.pluralName || viewName,
+        clientRows: listState.clientMode ? listState.clientRows : undefined,
+      });
+    } catch (err) {
+      toast({ title: t('list.exportFailed', 'Export failed'), description: errorMessage(err), variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
   const visibleFilters = (list.filters ?? []).filter(
     (f) => f.type !== 'objectId' || canAccessView(schema, f.objectName, 'Get', checkers),
   );
@@ -202,12 +232,17 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
           {list.subtitle && <p className="mt-1 text-sm text-muted-foreground">{list.subtitle}</p>}
         </div>
         <div className="flex items-center gap-2">
-          {massActions.length > 0 && selectedCount > 0 && (
+          <Button variant="outline" size="sm" onClick={exportCsv} disabled={exporting || busy}>
+            <Download className="mr-2 h-4 w-4" aria-hidden />
+            {t('list.exportCsv', 'Export CSV')}
+          </Button>
+          {(massActions.length > 0 || canChangeQuota) && selectedCount > 0 && (
             <MassActionBar
               actions={massActions}
               count={selectedCount}
               disabled={actions.pending}
               onSelect={confirmMassAction}
+              onChangeQuota={canChangeQuota ? () => setQuotaOpen(true) : undefined}
             />
           )}
           {canCreate && section && (
@@ -234,7 +269,7 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
       {listState.error && <ListError message={listState.error} onRetry={listState.refetch} />}
       {actions.error && <ListError message={actions.error} onDismiss={actions.clearError} />}
 
-      {massActions.length > 0 && selection.pageState === 'all' && (
+      {massActions.length > 0 && !listState.clientMode && selection.pageState === 'all' && (
         <SelectionBanner
           allMatching={selection.allMatching}
           pageCount={selection.selectedIds.length}
@@ -253,9 +288,9 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
         schema={schema}
         objectName={objectName}
         sort={state.sort}
-        sortable={new Set(list.sort ?? [])}
+        sortable={new Set([...(list.sort ?? []), ...clientSortableNames(list)])}
         onSort={listState.toggleSort}
-        selection={massActions.length > 0 ? selection : null}
+        selection={massActions.length > 0 || canChangeQuota ? selection : null}
         rowHref={(id) => (section ? `/${section}/${viewName}/${id}` : null)}
         rowLabel={(item) => itemLabel(item, labelProperty)}
         renderRowActions={
@@ -285,6 +320,11 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
           disabled={listState.isFetching}
           onPrev={listState.prevPage}
           onNext={listState.nextPage}
+          pageSize={listState.pageSize}
+          onPageSizeChange={(size) => {
+            useUIStore.getState().setListPageSize(size);
+            listState.applyFilters(state.filters);
+          }}
         />
       )}
 
@@ -292,6 +332,21 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
         <div className="absolute inset-0 flex items-center justify-center bg-background/50" aria-hidden>
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
+      )}
+
+      {canChangeQuota && (
+        <ChangeQuotaDialog
+          open={quotaOpen}
+          onOpenChange={setQuotaOpen}
+          count={selectedCount}
+          onConfirm={async (bytes) => {
+            const ok = await actions.runMassAction(
+              { type: 'setProperty', label: t('list.changeQuota', 'Change quota…'), properties: { 'quotas/maxDiskQuota': bytes } },
+              { ids: selection.selectedIds, allMatching: selection.allMatching, filter: listState.jmapFilter, sort: listState.jmapSort },
+            );
+            if (ok) selection.clear();
+          }}
+        />
       )}
 
       <ConfirmDialog

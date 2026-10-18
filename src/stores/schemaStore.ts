@@ -31,7 +31,7 @@ function withOnboardingNavEntry(schema: Schema): Schema {
   if (alreadyPresent) return schema;
 
   const onboardingLink: LayoutItem = {
-    link: { name: 'Getting Started', icon: 'rocket', viewName: ONBOARDING_VIEW_NAME },
+    link: { name: layoutLabel('Getting Started'), icon: 'rocket', viewName: ONBOARDING_VIEW_NAME },
   };
   const dashboardIdx = first.items.findIndex(
     (item) => 'link' in item && item.link.viewName === 'CustomComponent/Dashboard',
@@ -64,7 +64,7 @@ function withOverviewNavEntry(schema: Schema): Schema {
   if (alreadyPresent) return schema;
 
   const overviewLink: LayoutItem = {
-    link: { name: 'Overview', icon: 'panels-top-left', viewName: OVERVIEW_VIEW_NAME },
+    link: { name: layoutLabel('Overview'), icon: 'panels-top-left', viewName: OVERVIEW_VIEW_NAME },
   };
 
   const onboardingIdx = first.items.findIndex(

@@ -7,6 +7,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { PageRange } from './listQuery';
 
 interface PaginationProps {
@@ -17,9 +18,11 @@ interface PaginationProps {
   disabled: boolean;
   onPrev: () => void;
   onNext: () => void;
+  pageSize?: number;
+  onPageSizeChange?: (size: number) => void;
 }
 
-export function Pagination({ range, total, count, pluralName, disabled, onPrev, onNext }: PaginationProps) {
+export function Pagination({ range, total, count, pluralName, disabled, onPrev, onNext, pageSize, onPageSizeChange }: PaginationProps) {
   const { t } = useTranslation();
   return (
     <nav
@@ -37,6 +40,20 @@ export function Pagination({ range, total, count, pluralName, disabled, onPrev, 
           : t('list.showingItems', 'Showing {{count}} items', { count })}
       </p>
       <div className="flex items-center gap-2">
+        {pageSize && onPageSizeChange && (
+          <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))} disabled={disabled}>
+            <SelectTrigger className="h-9 w-[5.5rem]" aria-label={t('list.pageSize', 'Rows per page')}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[25, 50, 100, 200].map((n) => (
+                <SelectItem key={n} value={String(n)}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <Button variant="outline" size="sm" disabled={!range.hasPrev || disabled} onClick={onPrev}>
           {t('list.previous', 'Previous')}
         </Button>

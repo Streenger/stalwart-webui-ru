@@ -8,6 +8,7 @@ import { buildJmapFilter } from '@/lib/listFilter';
 import type { ListPageParams } from '@/data/keys';
 import type { ResolvedSchema } from '@/lib/schemaResolver';
 import type { Field, List } from '@/types/schema';
+import { clientSortableNames, fetchProperties, isClientOnlyFilter } from './syntheticColumns';
 import type { ListSort, ListUrlState } from './listUrlState';
 
 export const LIST_PAGE_SIZE = 25;
@@ -30,15 +31,23 @@ export function buildListFilter(
 ): Record<string, unknown> | undefined {
   const filter = buildJmapFilter({
     appliedFilters: filters,
-    filters: list.filters,
+    // Фильтры с признаком clientOnly сервер не поддерживает: они применяются в браузере.
+    filters: list.filters?.filter((f) => !isClientOnlyFilter(f)),
     filtersStatic: list.filtersStatic,
     isXPrefixed: objectName.startsWith('x:'),
   });
   return Object.keys(filter).length > 0 ? filter : undefined;
 }
 
-export function effectiveSort(sort: ListSort | null, list: Pick<List, 'sort'>): ListSort | null {
-  return sort && list.sort?.includes(sort.field) ? sort : null;
+export function effectiveSort(sort: ListSort | null, list: Pick<List, 'sort' | 'columns'>): ListSort | null {
+  if (!sort) return null;
+  return list.sort?.includes(sort.field) || clientSortableNames(list).has(sort.field) ? sort : null;
+}
+
+/** Поле сортировки, которое выполняется только в браузере (сервер его не сортирует). */
+export function clientSortField(sort: ListSort | null, list: Pick<List, 'sort' | 'columns'>): string | null {
+  const effective = effectiveSort(sort, list);
+  return effective && clientSortableNames(list).has(effective.field) ? effective.field : null;
 }
 
 export function buildListSort(sort: ListSort | null): Record<string, unknown>[] | undefined {
@@ -52,11 +61,11 @@ export function buildListPageParams(
   pageSize = LIST_PAGE_SIZE,
   labelProperty?: string,
 ): ListPageParams {
-  const properties = ['id', ...list.columns.map((c) => c.name)];
+  const properties = fetchProperties(list.columns);
   if (labelProperty && !properties.includes(labelProperty)) properties.push(labelProperty);
   const params: ListPageParams = {
     filter: buildListFilter(state.filters, list, objectName),
-    sort: buildListSort(effectiveSort(state.sort, list)),
+    sort: buildListSort(effectiveSort(state.sort, list) && !clientSortField(state.sort, list) ? state.sort : null),
     limit: pageSize,
     calculateTotal: true,
     properties,
