@@ -14,6 +14,7 @@ import { isReportSummaryColumn } from '@/lib/reportSummaries';
 import { scalarText } from './listQuery';
 import { COUNT_COLUMN_SOURCES, QUOTA_USAGE_COLUMN, computeQuotaUsage, countColumnValue } from './syntheticColumns';
 import { useTranslation } from 'react-i18next';
+import { CornerDownRight } from 'lucide-react';
 
 interface ListCellProps {
   schema: Schema;
@@ -25,6 +26,8 @@ interface ListCellProps {
 
 interface ListCellProps2 extends ListCellProps {
   item?: Record<string, unknown>;
+  /** Глубина вложенности для названия почтового ящика. */
+  depth?: number;
 }
 
 function QuotaUsage({ item }: { item: Record<string, unknown> }) {
@@ -61,8 +64,16 @@ function QuotaUsage({ item }: { item: Record<string, unknown> }) {
   );
 }
 
-export function ListCell({ schema, objectName, column, field, value, item }: ListCellProps2) {
+export function ListCell({ schema, objectName, column, field, value, item, depth }: ListCellProps2) {
   if (item) {
+    if (depth !== undefined && column === 'name') {
+      return (
+        <div style={{ paddingLeft: depth * 20 }} className="flex items-center gap-1.5">
+          {depth > 0 && <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />}
+          <span>{String(item.name ?? '')}</span>
+        </div>
+      );
+    }
     if (column === QUOTA_USAGE_COLUMN) return <QuotaUsage item={item} />;
     if (column in COUNT_COLUMN_SOURCES) return <>{countColumnValue(column, item)}</>;
     if (isReportSummaryColumn(column)) return <ReportSummaryCell colName={column} item={item} />;

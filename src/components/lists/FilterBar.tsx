@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-SEL
  */
 
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp, Filter as FilterIcon, RotateCcw, Search } from 'lucide-react';
 
@@ -22,9 +22,11 @@ interface FilterBarProps {
   disabled: boolean;
   onApply: (values: Record<string, string>) => void;
   onReset: () => void;
+  /** Дополнительные элементы слева внизу панели (например, пресеты журнала). */
+  extra?: ReactNode;
 }
 
-export function FilterBar({ schema, filters, applied, isXPrefixed, disabled, onApply, onReset }: FilterBarProps) {
+export function FilterBar({ schema, filters, applied, isXPrefixed, disabled, onApply, onReset, extra }: FilterBarProps) {
   const { t } = useTranslation();
   const panelId = useId();
   const appliedKey = filtersKey(applied);
@@ -79,7 +81,9 @@ export function FilterBar({ schema, filters, applied, isXPrefixed, disabled, onA
               />
             ))}
           </div>
-          <div className="flex items-center justify-end gap-2 border-t px-5 py-3">
+          <div className="flex items-center justify-between gap-2 border-t px-5 py-3">
+            <div>{extra}</div>
+            <div className="flex items-center gap-2">
             <Button type="button" variant="ghost" size="sm" onClick={handleReset} disabled={disabled}>
               <RotateCcw className="mr-2 h-4 w-4" aria-hidden />
               {t('list.resetFilters', 'Reset')}
@@ -88,6 +92,7 @@ export function FilterBar({ schema, filters, applied, isXPrefixed, disabled, onA
               <Search className="mr-2 h-4 w-4" aria-hidden />
               {t('list.searchFilters', 'Search')}
             </Button>
+            </div>
           </div>
         </form>
       </CollapsibleContent>

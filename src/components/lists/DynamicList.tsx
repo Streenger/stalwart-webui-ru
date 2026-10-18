@@ -31,6 +31,18 @@ import { SelectionBanner } from './SelectionBanner';
 import { itemActionHref, resolveItemActions, resolveMassActions, type ResolvedItemAction } from './listActions';
 import { getListFields, itemId, itemLabel } from './listQuery';
 import { useDynamicList } from './useDynamicList';
+import {
+  ColumnMenu,
+  LogFilterPresets,
+  ProblemsOnlySwitch,
+  QueueBacklogNotice,
+  QueueEmptyState,
+  RefreshControls,
+} from './ListExtras';
+import { useColumnPreferences } from './useColumnPreferences';
+import { listNeedsReportProperty } from '@/lib/reportSummaries';
+import { buildQueueOpsLinks } from '@/lib/queueOpsLinks';
+import { useAccountStore } from '@/stores/accountStore';
 import { clientSortableNames, QUOTA_USAGE_COLUMN } from './syntheticColumns';
 import { ChangeQuotaDialog } from './ChangeQuotaDialog';
 import { exportListCsv } from './listExport';
@@ -85,7 +97,15 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
   const objectName = obj.objectName;
   const fields = getListFields(resolved.resolvedSchema);
   const labelProperty = getDisplayProperty(schema, viewName);
-  const listState = useDynamicList(objectName, list, labelProperty in fields ? labelProperty : undefined);
+  const [problemsOnly, setProblemsOnly] = useState(false);
+  const needsReportProperty = listNeedsReportProperty(list.columns);
+  const isLogEntries = viewName === 'x:Log' || objectName === 'x:Log';
+  const isQueuedMessages = viewName === 'x:QueuedMessage' || objectName === 'x:QueuedMessage';
+  const columnPrefs = useColumnPreferences(viewName, list.columns);
+  const listState = useDynamicList(objectName, list, labelProperty in fields ? labelProperty : undefined, {
+    viewName,
+    problemsOnly,
+  });
   const actions = useListActions(objectName);
   const { items, total, state } = listState;
   const pageIds = items.flatMap((item) => {
@@ -118,7 +138,7 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
     try {
       await exportListCsv({
         objectName,
-        columns: list.columns,
+        columns: columnPrefs.visible,
         filter: listState.jmapFilter,
         sort: listState.jmapSort,
         filename: list.pluralName || viewName,
@@ -130,6 +150,12 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
       setExporting(false);
     }
   };
+  const permissions = useAccountStore((st) => st.permissions);
+  const queueOpsLinks = isQueuedMessages
+    ? buildQueueOpsLinks(schema, viewToSection, checkers.canGet, (perm) => permissions.includes(perm))
+    : [];
+  const filtersActive =
+    problemsOnly || Object.entries(state.filters).some(([key, val]) => !key.endsWith('Op') && val.trim() !== '');
   const visibleFilters = (list.filters ?? []).filter(
     (f) => f.type !== 'objectId' || canAccessView(schema, f.objectName, 'Get', checkers),
   );
@@ -232,6 +258,16 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
           {list.subtitle && <p className="mt-1 text-sm text-muted-foreground">{list.subtitle}</p>}
         </div>
         <div className="flex items-center gap-2">
+          {needsReportProperty && <ProblemsOnlySwitch checked={problemsOnly} onChange={setProblemsOnly} />}
+          {(isLogEntries || isQueuedMessages) && (
+            <RefreshControls
+              onRefresh={listState.refetch}
+              autoRefreshEnabled={isLogEntries}
+              canAutoRefresh={state.anchors.length === 0}
+              loading={busy}
+            />
+          )}
+          {list.columns.length > 1 && <ColumnMenu columns={columnPrefs} />}
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={exporting || busy}>
             <Download className="mr-2 h-4 w-4" aria-hidden />
             {t('list.exportCsv', 'Export CSV')}
@@ -263,7 +299,12 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
           disabled={listState.isFetching}
           onApply={listState.applyFilters}
           onReset={listState.resetFilters}
+          extra={isLogEntries ? <LogFilterPresets applied={state.filters} disabled={busy} onApply={listState.applyFilters} /> : undefined}
         />
+      )}
+
+      {isQueuedMessages && !filtersActive && total !== null && total > 0 && (
+        <QueueBacklogNotice total={total} links={queueOpsLinks} />
       )}
 
       {listState.error && <ListError message={listState.error} onRetry={listState.refetch} />}
@@ -282,7 +323,7 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
 
       <ListTable
         caption={list.title}
-        columns={list.columns}
+        columns={columnPrefs.visible}
         fields={fields}
         items={items}
         schema={schema}
@@ -309,6 +350,8 @@ function DynamicListView({ viewName, schema, resolved, list }: DynamicListViewPr
         }
         loading={listState.isLoading}
         busy={busy}
+        mailboxDepths={viewName === 'Mailbox' ? listState.mailboxDepths : undefined}
+        emptyState={isQueuedMessages && !filtersActive ? <QueueEmptyState links={queueOpsLinks} /> : undefined}
       />
 
       {(items.length > 0 || state.anchors.length > 0) && (

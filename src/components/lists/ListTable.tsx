@@ -34,6 +34,8 @@ interface ListTableProps {
   renderRowActions: ((item: ListItem, id: string, label: string) => ReactNode) | null;
   loading: boolean;
   busy: boolean;
+  mailboxDepths?: Map<string, number>;
+  emptyState?: ReactNode;
 }
 
 const STRETCHED_LINK =
@@ -55,6 +57,8 @@ export function ListTable({
   renderRowActions,
   loading,
   busy,
+  mailboxDepths,
+  emptyState,
 }: ListTableProps) {
   const { t } = useTranslation();
   const colSpan = columns.length + (selection ? 1 : 0) + (renderRowActions ? 1 : 0);
@@ -106,7 +110,7 @@ export function ListTable({
                 </td>
               </tr>
             ) : rows.length === 0 ? (
-              <ListTableMessage colSpan={colSpan}>{t('list.noResults', 'No results found')}</ListTableMessage>
+              <ListTableMessage colSpan={colSpan}>{emptyState ?? t('list.noResults', 'No results found')}</ListTableMessage>
             ) : (
               rows.map(({ item, id }) => {
                 const label = rowLabel(item);
@@ -132,6 +136,7 @@ export function ListTable({
                           field={fields[col.name]}
                           value={value}
                           item={item}
+                          depth={mailboxDepths ? (mailboxDepths.get(id) ?? 0) : undefined}
                         />
                       );
                       if (index === 0) {

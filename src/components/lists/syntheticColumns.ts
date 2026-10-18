@@ -28,7 +28,7 @@ export function isSyntheticColumn(name: string): boolean {
 }
 
 /** Реальные свойства JMAP для набора (возможно синтетических) столбцов. */
-export function fetchProperties(columns: Array<{ name: string }>): string[] {
+export function fetchProperties(columns: Array<{ name: string }>, options: { mailbox?: boolean } = {}): string[] {
   const properties: string[] = ['id'];
   const add = (name: string) => {
     if (!properties.includes(name)) properties.push(name);
@@ -42,6 +42,7 @@ export function fetchProperties(columns: Array<{ name: string }>): string[] {
     else add(name);
   }
   if (listNeedsReportProperty(columns)) add('report');
+  if (options.mailbox) add('parentId');
   return properties;
 }
 
@@ -89,4 +90,37 @@ export function sortClientItems(items: Item[], column: string, ascending: boolea
 export function applyClientFilters(items: Item[], active: Array<{ field: string; value: string }>): Item[] {
   if (active.length === 0) return items;
   return items.filter((item) => active.every((f) => String(item[f.field] ?? '') === f.value));
+}
+
+/**
+ * Почтовые ящики: родитель располагается перед потомками (братья по алфавиту),
+ * для каждой строки запоминается глубина. Нужен полный набор строк, так как родитель
+ * может оказаться на другой странице (SCHEMA-DEVIATION: mailbox-client-hierarchy-sort).
+ */
+export function sortMailboxesByHierarchy(items: Item[]): { items: Item[]; depths: Map<string, number> } {
+  const ids = new Set(items.map((item) => item.id as string));
+  const childrenOf = new Map<string, Item[]>();
+  const roots: Item[] = [];
+  for (const item of items) {
+    const parentId = item.parentId as string | null | undefined;
+    if (parentId && ids.has(parentId)) {
+      const siblings = childrenOf.get(parentId) ?? [];
+      siblings.push(item);
+      childrenOf.set(parentId, siblings);
+    } else {
+      roots.push(item);
+    }
+  }
+  const byName = (a: Item, b: Item) => String(a.name ?? '').localeCompare(String(b.name ?? ''));
+  roots.sort(byName);
+  for (const siblings of childrenOf.values()) siblings.sort(byName);
+  const ordered: Item[] = [];
+  const depths = new Map<string, number>();
+  const visit = (item: Item, depth: number) => {
+    ordered.push(item);
+    depths.set(item.id as string, depth);
+    for (const child of childrenOf.get(item.id as string) ?? []) visit(child, depth + 1);
+  };
+  for (const root of roots) visit(root, 0);
+  return { items: ordered, depths };
 }

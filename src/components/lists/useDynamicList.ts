@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useJmapList } from '@/data/objects';
 import { jmapKeys } from '@/data/keys';
 import { evaluateFetchAllTotal, FETCH_ALL_HARD_CAP, probeQueryTotal } from '@/lib/fetchAllGuardrails';
+import { listNeedsReportProperty, reportHasProblems } from '@/lib/reportSummaries';
 import { jmapQueryAllAndGet } from '@/services/jmap/legacy';
 import { getAccountId } from '@/services/jmap/client';
 import { errorMessage } from '@/lib/jmapErrors';
@@ -35,10 +36,12 @@ import {
   fetchProperties,
   isClientOnlyFilter,
   sortClientItems,
+  sortMailboxesByHierarchy,
 } from './syntheticColumns';
 import { listStateKey, nextSort, parseListSearch, serializeListSearch, type ListUrlState } from './listUrlState';
 
 const EMPTY_ITEMS: ListItem[] = [];
+const EMPTY_DEPTHS = new Map<string, number>();
 const EMPTY_LIST: Pick<List, 'filters' | 'filtersStatic' | 'columns' | 'sort'> = { columns: [] };
 
 export interface DynamicListState {
@@ -55,6 +58,8 @@ export interface DynamicListState {
   clientMode: boolean;
   /** Все строки в клиентском режиме (для экспорта). */
   clientRows: ListItem[];
+  /** Глубина вложенности почтовых ящиков (только для списка Mailbox). */
+  mailboxDepths: Map<string, number>;
   pageSize: number;
   error: string | null;
   applyFilters: (filters: Record<string, string>) => void;
@@ -69,6 +74,7 @@ export function useDynamicList(
   objectName: string | undefined,
   list: List | null | undefined,
   labelProperty?: string,
+  options: { viewName?: string; problemsOnly?: boolean } = {},
 ): DynamicListState {
   const [searchParams, setSearchParams] = useSearchParams();
   const state = parseListSearch(searchParams);
@@ -82,7 +88,10 @@ export function useDynamicList(
     .filter(isClientOnlyFilter)
     .map((f) => ({ field: 'field' in f ? f.field : '', value: state.filters[('field' in f ? f.field : '') as string] ?? '' }))
     .filter((f) => f.field && f.value !== '');
-  const clientMode = Boolean(enabledObject) && (sortColumn !== null || activeClientFilters.length > 0);
+  const isMailbox = options.viewName === 'Mailbox' || objectName === 'Mailbox';
+  const problemsOnly = Boolean(options.problemsOnly) && listNeedsReportProperty(effectiveList.columns);
+  const clientMode =
+    Boolean(enabledObject) && (sortColumn !== null || activeClientFilters.length > 0 || isMailbox || problemsOnly);
 
   const query = useJmapList(
     clientMode ? null : enabledObject,
@@ -91,13 +100,13 @@ export function useDynamicList(
   );
 
   const serverFilter = buildListFilter(state.filters, effectiveList, objectName ?? '');
-  const properties = fetchProperties(effectiveList.columns);
+  const properties = fetchProperties(effectiveList.columns, { mailbox: isMailbox });
   if (labelProperty && !properties.includes(labelProperty)) properties.push(labelProperty);
   const clientQuery = useQuery({
     queryKey: [
       ...jmapKeys.lists(objectName ?? ''),
       'client',
-      { filter: serverFilter ?? null, properties, sort: state.sort?.field, asc: state.sort?.ascending, activeClientFilters },
+      { filter: serverFilter ?? null, properties, sort: state.sort?.field, asc: state.sort?.ascending, activeClientFilters, problemsOnly },
     ],
     enabled: clientMode && !!objectName,
     staleTime: 0,
@@ -113,6 +122,8 @@ export function useDynamicList(
       }
       const { list } = await jmapQueryAllAndGet(objectName!, accountId, fetchAll, properties);
       let matched = applyClientFilters(list, activeClientFilters);
+      if (problemsOnly) matched = matched.filter((item) => reportHasProblems(options.viewName ?? '', item));
+      if (isMailbox) matched = sortMailboxesByHierarchy(matched).items;
       if (sortColumn) matched = sortClientItems(matched, sortColumn, state.sort?.ascending ?? true);
       return matched;
     },
@@ -151,6 +162,7 @@ export function useDynamicList(
 
   // В клиентском режиме номер страницы равен числу «якорей» в адресе.
   const clientAll = clientQuery.data ?? EMPTY_ITEMS;
+  const mailboxDepths = isMailbox ? sortMailboxesByHierarchy(clientAll).depths : EMPTY_DEPTHS;
   const clientPage = Math.min(state.anchors.length, Math.max(0, Math.ceil(clientAll.length / pageSize) - 1));
   const items = clientMode
     ? clientAll.slice(clientPage * pageSize, (clientPage + 1) * pageSize)
@@ -177,6 +189,7 @@ export function useDynamicList(
     isFetching: active.isFetching,
     clientMode,
     clientRows: clientAll,
+    mailboxDepths,
     pageSize,
     error: active.isError && !anchorLost ? errorMessage(active.error) : null,
     applyFilters: (filters) => navigateTo({ filters, sort: state.sort, anchors: [] }),
