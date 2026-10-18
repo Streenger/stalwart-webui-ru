@@ -9,10 +9,17 @@ import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 
 import { cn } from '@/lib/utils';
 
-function ScrollArea({ className, children, ...props }: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+function ScrollArea({
+  className,
+  viewportClassName,
+  children,
+  ...props
+}: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & { viewportClassName?: string }) {
   return (
-    <ScrollAreaPrimitive.Root data-slot="scroll-area" className={cn('relative overflow-hidden', className)} {...props}>
-      <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+    <ScrollAreaPrimitive.Root data-slot="scroll-area" className={cn('relative min-w-0 overflow-hidden', className)} {...props}>
+      <ScrollAreaPrimitive.Viewport
+        className={cn('h-full w-full rounded-[inherit] [&>div]:!block [&>div]:!min-w-0', viewportClassName)}
+      >
         {children}
       </ScrollAreaPrimitive.Viewport>
       <ScrollBar />

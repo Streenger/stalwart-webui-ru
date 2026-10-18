@@ -143,6 +143,25 @@ export function findFirstAccessibleLinkInLayout(
   return findFirstLink(layout, (viewName) => isLinkAccessible(schema, viewName, edition, canGet, hasPerm));
 }
 
+/**
+ * Форк: панель Dashboard удалена (Enterprise), поэтому главной страницей
+ * считается «Обзор», если он есть в раскладке и доступен.
+ * Идея из форка LinkPhoenix/stalwart-webui-fork.
+ */
+export function findPreferredDefaultLinkInLayout(
+  schema: Schema,
+  layout: Layout,
+  edition: string,
+  canGet: CanGet,
+  hasPerm?: HasPermission,
+  overviewViewName = 'CustomComponent/Overview',
+): string | null {
+  if (layoutContainsLink(layout, overviewViewName) && isLinkAccessible(schema, overviewViewName, edition, canGet, hasPerm)) {
+    return overviewViewName;
+  }
+  return findFirstAccessibleLinkInLayout(schema, layout, edition, canGet, hasPerm);
+}
+
 export function visibleLayouts(schema: Schema, canGet: CanGet, hasPerm?: HasPermission): Layout[] {
   return schema.layouts.filter((layout) => findFirstVisibleLinkInLayout(schema, layout, canGet, hasPerm) !== null);
 }

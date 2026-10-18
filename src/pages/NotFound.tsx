@@ -11,7 +11,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 export default function NotFound() {
   const { t } = useTranslation();
 
-  useDocumentTitle(t('errors.notFound'));
+  useDocumentTitle(t('errors.notFound', 'The requested resource was not found.'));
 
   return (
     <div className="flex min-h-screen items-center justify-center">

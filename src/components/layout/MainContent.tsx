@@ -27,6 +27,14 @@ const DeliveryTracePage = lazyFeature(
   () => import('@/features/troubleshoot/DeliveryTracePage'),
   (m) => m.DeliveryTracePage,
 );
+const OnboardingChecklistPage = lazyFeature(
+  () => import('@/features/onboarding/OnboardingChecklistPage'),
+  (m) => m.OnboardingChecklistPage,
+);
+const OverviewPage = lazyFeature(
+  () => import('@/features/overview/OverviewPage'),
+  (m) => m.OverviewPage,
+);
 const ActionPage = lazyFeature(
   () => import('@/features/actions/ActionPage'),
   (m) => m.ActionPage,
@@ -67,6 +75,8 @@ function renderView(
     if (componentName === 'LiveDelivery') {
       return <DeliveryTracePage />;
     }
+    if (componentName === 'Onboarding') return <OnboardingChecklistPage />;
+    if (componentName === 'Overview') return <OverviewPage />;
     return (
       <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
         {t('errors.unknownComponent', 'Unknown component: {{name}}', { name: componentName })}

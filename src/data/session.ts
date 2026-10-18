@@ -12,6 +12,18 @@ import { useSchemaStore } from '@/stores/schemaStore';
 import { useAccountStore } from '@/stores/accountStore';
 import { setLocale } from '@/i18n';
 import { localizeSchema } from '@/lib/localizeSchema';
+import { withClientLogFilters } from '@/lib/logFilters';
+import { withAccountListColumns } from '@/lib/accountColumns';
+import { withMailingListColumns } from '@/lib/mailingListColumns';
+import { withRoleListColumns } from '@/lib/roleColumns';
+import { withDomainColumns } from '@/lib/domainColumns';
+import { withReportListColumns } from '@/lib/reportColumns';
+import {
+  withDirectoryColumns,
+  withDnsServerColumns,
+  withNetworkListenerColumns,
+  withWebhookColumns,
+} from '@/lib/operationsListColumns';
 
 export interface SessionInfo {
   accounts: Record<string, { name: string; isPersonal: boolean }>;
@@ -50,7 +62,22 @@ export async function initializeSession(signal?: AbortSignal): Promise<true> {
   ]);
   const info = parseSession(session);
   // Russian fork: translate the server-provided schema and apply Russian regional defaults.
-  const schema = await localizeSchema(rawSchema);
+  const schema = await localizeSchema(
+    // Столбцы и фильтры списков из форка LinkPhoenix/stalwart-webui-fork.
+    withReportListColumns(
+      withDomainColumns(
+        withRoleListColumns(
+          withMailingListColumns(
+            withAccountListColumns(
+              withNetworkListenerColumns(
+                withDnsServerColumns(withDirectoryColumns(withWebhookColumns(withClientLogFilters(rawSchema)))),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 
   useAuthStore
     .getState()

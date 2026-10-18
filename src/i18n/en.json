@@ -54,7 +54,8 @@
     "save": "Save",
     "search": "Search",
     "searchPlaceholder": "Search...",
-    "yes": "Yes"
+    "yes": "Yes",
+    "showDescription": "Show description"
   },
   "dashboard": {
     "allNodes": "All nodes",
@@ -79,7 +80,9 @@
     "preset90d": "Last 90 days",
     "refresh": "Refresh",
     "title": "Dashboard",
-    "to": "To"
+    "to": "To",
+    "lastUpdated": "Last updated {{time}}",
+    "noDashboardsConfigured": "No dashboards configured."
   },
   "deliveryTrace": {
     "attemptCount_one": "{{count}} attempt",
@@ -161,7 +164,8 @@
     "trialTitle": "Unlock Enterprise Features",
     "trialDescription": "Get access to advanced features including multi-tenancy, AI-powered spam filtering, alerts, and more.",
     "trialButton": "Start 30-Day Free Trial",
-    "whyNotFree": "Why is this not free?"
+    "whyNotFree": "Why is this not free?",
+    "openOverview": "Open Overview"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -225,7 +229,11 @@
     "removeItemN": "Remove item {{n}}",
     "showValue": "Show value",
     "unit": "Unit",
-    "unsupportedType": "Unsupported field type: {{type}}"
+    "unsupportedType": "Unsupported field type: {{type}}",
+    "active": "Active",
+    "expandToFitContent": "Expand to fit content",
+    "hour": "Hour",
+    "minute": "Minute"
   },
   "filters": {
     "after": "After",
@@ -359,7 +367,49 @@
     "showingItems": "Showing {{count}} items",
     "sortAscending": "Sort ascending",
     "sortClear": "Clear sort",
-    "sortDescending": "Sort descending"
+    "sortDescending": "Sort descending",
+    "openItem": "Open {{name}}",
+    "rowActions": "Actions for this item",
+    "sortByColumn": "Sort by {{column}}, currently {{state}}",
+    "sortNone": "not sorted",
+    "changeQuota": "Change quota…",
+    "changeQuotaDescription_one": "Set a new maximum disk quota for {{count}} account.",
+    "changeQuotaDescription_other": "Set a new maximum disk quota for {{count}} accounts.",
+    "changeQuotaTitle": "Change disk quota",
+    "comboboxEmptyText": "No matches.",
+    "comboboxSearchPlaceholder": "Search...",
+    "csvNo": "No",
+    "csvYes": "Yes",
+    "exportCsv": "Export CSV",
+    "exportSuccess": "Exported {{count}} rows to CSV",
+    "exactMatchOnly": "Exact match only",
+    "fetchAllHardCap": "Refusing to load {{count}} matching rows into the browser (limit {{cap}}). Narrow filters or export from a smaller set.",
+    "fetchAllWarn": "Loading {{count}} rows into the browser — this may be slow.",
+    "noFilterResults": "No results match these filters",
+    "noFilterResultsHint": "Text filters require an exact value, not a partial search.",
+    "moveColumnEarlier": "Move earlier",
+    "moveColumnLater": "Move later",
+    "refresh": "Refresh",
+    "refreshCooldown": "Please wait a few seconds before refreshing again",
+    "autoRefresh": "Auto-refresh",
+    "filterPresets": "Presets",
+    "filterPresetsEmpty": "No saved presets",
+    "filterPresetSave": "Save preset",
+    "filterPresetDelete": "Delete preset",
+    "filterPresetNamePrompt": "Name for this filter preset",
+    "problemsOnly": "Problems only",
+    "queueBacklogBody": "Use Delivery Trace or Log Entries to investigate stuck or delayed mail.",
+    "queueBacklogTitle": "{{count}} messages waiting in the queue",
+    "queueEmptyBody": "No messages are waiting. If mail is delayed, check Delivery Trace or Log Entries.",
+    "queueEmptyTitle": "The delivery queue is empty",
+    "queueLinkDeliveryTrace": "Delivery Trace",
+    "queueLinkLogs": "Log Entries",
+    "unlimitedQuota": "∞",
+    "negativeQuotaInfoAria": "Why is disk usage negative?",
+    "negativeQuotaTooltip": "This disk-usage counter is out of sync (often after a migration or reset). Schedule a task: Perform account maintenance operations → Recalculate storage quota usage for the account. Or for all accounts: Perform store maintenance operations → Reset all user quotas.",
+    "quotaUsagePercent": "Quota used",
+    "quotaNoLimit": "No limit (unlimited)",
+    "quotaValueAria": "Quota amount"
   },
   "login": {
     "continue": "Continue",
@@ -374,7 +424,7 @@
   },
   "logout": "Logout",
   "version": {
-    "label": "Stalwart WebUI v{{version}}"
+    "label": "Stalwart WebUI Fork v{{version}}"
   },
   "oauth": {
     "backToLogin": "Back to login",
@@ -470,6 +520,141 @@
   "view": {
     "couldNotResolve": "Could not resolve object",
     "failedToLoad": "Failed to load",
-    "objectNotFound": "Object not found"
+    "objectNotFound": "Object not found",
+    "hideEmptyFields": "Hide empty fields",
+    "showEmptyFields": "Show {{count}} empty fields"
+  },
+  "appearance": {
+    "colorTheme": "Color theme",
+    "colorThemeDescription": "Pick the accent color used across the interface.",
+    "comfortable": "Comfortable",
+    "compact": "Compact",
+    "corners": "Corners",
+    "cornersDescription": "Choose between rounded and square corners. Applies to every theme.",
+    "dark": "Dark",
+    "description": "Customize how the interface looks and feels.",
+    "label": "Appearance",
+    "light": "Light",
+    "listDensity": "List density",
+    "listDensityDescription": "Choose how tightly rows are packed in admin lists.",
+    "mode": "Mode",
+    "modeDescription": "Switch between light and dark mode.",
+    "rounded": "Rounded",
+    "square": "Square",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode",
+    "theme": {
+      "amber": "Amber",
+      "default": "Default",
+      "forest": "Forest",
+      "ocean": "Ocean",
+      "rose": "Rose",
+      "stalwart": "Stalwart",
+      "teal": "Teal",
+      "violet": "Violet"
+    }
+  },
+  "changelog": {
+    "description": "What's new in this fork, release by release.",
+    "label": "Changelog",
+    "officialNotice": "The official WebUI is maintained by the Stalwart team and is available at"
+  },
+  "mainContent": {
+    "selectView": "Select a view from the sidebar.",
+    "unknownComponent": "Unknown component: {{name}}",
+    "unknownView": "Unknown view: {{name}}"
+  },
+  "onboarding": {
+    "title": "Getting Started",
+    "subtitle": "A quick checklist for a new Stalwart install. {{done}} of {{total}} done.",
+    "unknown": "Couldn't be checked — you may not have permission to view this.",
+    "moreTitle": "Want to go further?",
+    "moreDescription": "DNS authentication docs and related settings. The Enterprise Dashboard and Delivery tests cover live metrics and outbound diagnostics.",
+    "domain": {
+      "title": "Configure a domain",
+      "description": "At least one domain must be added and enabled before this server can handle mail for it.",
+      "action": "Go to Domains"
+    },
+    "dkim": {
+      "title": "Set up DKIM signing",
+      "description": "A DKIM signature lets receiving servers verify mail actually came from your domain.",
+      "action": "Go to DKIM Signatures"
+    },
+    "certificate": {
+      "title": "Install a valid TLS certificate",
+      "description": "Required for encrypted SMTP/IMAP/HTTPS connections. Checked for at least one certificate that has not expired.",
+      "action": "Go to TLS Certificates"
+    },
+    "admin": {
+      "title": "Create an administrator account",
+      "description": "A named admin account, separate from the break-glass recovery admin, should be used for day-to-day management.",
+      "action": "Go to Accounts"
+    },
+    "optional": "Optional",
+    "dmarcReports": {
+      "title": "Start receiving DMARC reports",
+      "description": "Publish a DMARC DNS record that sends aggregate reports to this server. Optional — reports may take time to arrive.",
+      "action": "Go to DMARC reports"
+    },
+    "further": {
+      "spfTitle": "Publish SPF",
+      "spfDescription": "Authorise this server to send mail for your domain (DNS TXT).",
+      "dmarcTitle": "Publish DMARC",
+      "dmarcDescription": "Ask receivers to report authentication results back to you.",
+      "spamTitle": "Review spam settings",
+      "spamDescription": "Tune classification and lists once mail is flowing.",
+      "listenersTitle": "Check network listeners",
+      "listenersDescription": "Confirm SMTP/IMAP/HTTPS listeners match how you expose the server.",
+      "openDocs": "Docs",
+      "open": "Open"
+    }
+  },
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Inventory of directory objects, mail readiness, and reports. Live telemetry stays on the Enterprise Dashboard.",
+    "refresh": "Refresh",
+    "refreshCooldown": "Please wait a few seconds before refreshing again",
+    "unavailable": "—",
+    "noPermission": "No inventory objects are available with your current permissions.",
+    "certificatesDetail": "{{valid}} valid · {{expired}} expired",
+    "certificatesValid": "{{count}} valid",
+    "countMissingTotal": "The server response did not include a count.",
+    "countQueryRejected": "The server could not complete this count query.",
+    "countRequestFailed": "Could not reach the server. Try refreshing the overview.",
+    "certificatesExpired": "{{count}} expired",
+    "certificatesExpiring": "{{count}} expiring soon",
+    "reportProblemsDetail": "{{count}} with issues in latest {{sample}}",
+    "queueBacklog": "Messages waiting in the queue",
+    "attentionWarn": "Attention",
+    "attentionDanger": "Needs attention",
+    "sections": {
+      "directory": "Directory",
+      "mailReadiness": "Mail readiness",
+      "access": "Access & apps",
+      "reports": "Reports"
+    },
+    "cards": {
+      "users": "Users",
+      "groups": "Groups",
+      "domains": "Domains",
+      "roles": "Roles",
+      "mailingLists": "Mailing lists",
+      "dkim": "DKIM signatures",
+      "certificates": "TLS certificates",
+      "queuedMessages": "Queued messages",
+      "apiKeys": "API keys",
+      "oauthClients": "OAuth clients",
+      "applications": "Web applications",
+      "dmarcExternal": "DMARC (inbound)",
+      "dmarcInternal": "DMARC (outbound)",
+      "tlsExternal": "TLS reports (inbound)",
+      "tlsInternal": "TLS reports (outbound)",
+      "arf": "ARF / abuse reports"
+    }
+  },
+  "webApplications": {
+    "activeWebUI": "Active WebUI",
+    "version": "Version",
+    "enabled": "Enabled"
   }
 }

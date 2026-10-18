@@ -6,14 +6,19 @@
 
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
 
-export function LoadingFallback({ fullScreen = false }: { fullScreen?: boolean }) {
+interface LoadingFallbackProps {
+  fullScreen?: boolean;
+}
+
+export function LoadingFallback({ fullScreen }: LoadingFallbackProps) {
   const { t } = useTranslation();
   return (
-    <div className={cn('flex flex-col items-center justify-center gap-3', fullScreen ? 'min-h-screen' : 'p-8')}>
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-muted-foreground">{t('common.loading')}</p>
+    <div className={`flex items-center justify-center ${fullScreen ? 'min-h-screen' : 'p-8'}`}>
+      <div className="flex flex-col items-center gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">{t('common.loading')}</p>
+      </div>
     </div>
   );
 }

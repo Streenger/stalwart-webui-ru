@@ -6,8 +6,10 @@
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LogOut, Menu, Moon, Search, Sun, User } from 'lucide-react';
+import { LogOut, Menu, Palette, ScrollText, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/common/ModeToggle';
+import { useCurrentAccountDetails } from '@/hooks/useCurrentAccount';
 import { CommandPalette } from '@/components/common/CommandPalette';
 import {
   DropdownMenu,
@@ -36,14 +38,17 @@ const IS_MAC = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
 export function TopBar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const theme = useUIStore((s) => s.theme);
-  const toggleTheme = useUIStore((s) => s.toggleTheme);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const setActiveSection = useUIStore((s) => s.setActiveSection);
   const accounts = useAuthStore((s) => s.accounts);
   const activeAccountId = useAuthStore((s) => s.activeAccountId);
   const switchAccount = useAuthStore((s) => s.switchAccount);
   const logout = useAuthStore((s) => s.logout);
+  const activeAccount = activeAccountId ? accounts[activeAccountId] : null;
+  const currentAccount = useCurrentAccountDetails();
+  const displayName =
+    currentAccount.username?.trim() || activeAccount?.name?.trim() || activeAccountId?.split('@')[0] || activeAccountId;
+  const displayEmail = currentAccount.email || activeAccountId;
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const { layouts: navigableLayouts, landingPath } = useLayoutNavigation();
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -114,18 +119,16 @@ export function TopBar() {
 
         <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
 
-        <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label={t('toggleTheme', 'Toggle theme')}>
-          {theme === 'light' ? (
-            <Moon aria-hidden="true" className="h-4 w-4" />
-          ) : (
-            <Sun aria-hidden="true" className="h-4 w-4" />
-          )}
-        </Button>
+        <ModeToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label={t('userMenu', 'User menu')}>
+            <Button variant="ghost" className="h-auto gap-2 px-2" aria-label={t('userMenu', 'User menu')}>
               <User aria-hidden="true" className="h-4 w-4" />
+              <div className="hidden flex-col items-start text-left md:flex">
+                <span className="text-sm font-medium leading-none">{displayName}</span>
+                <span className="text-xs leading-none text-muted-foreground">{displayEmail}</span>
+              </div>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
@@ -165,7 +168,22 @@ export function TopBar() {
               </>
             )}
 
+            <DropdownMenuItem asChild>
+              <Link to="/Appearance">
+                <Palette aria-hidden="true" className="mr-2 h-4 w-4" />
+                {t('appearance.label', 'Appearance')}
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link to="/Changelog">
+                <ScrollText aria-hidden="true" className="mr-2 h-4 w-4" />
+                {t('changelog.label', 'Changelog')}
+              </Link>
+            </DropdownMenuItem>
+
             <DropdownMenuItem
+              variant="destructive"
               onClick={() => {
                 const endSessionEndpoint = useAuthStore.getState().endSessionEndpoint;
                 const endSessionUrl = endSessionEndpoint

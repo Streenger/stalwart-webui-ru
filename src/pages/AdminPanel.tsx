@@ -19,8 +19,8 @@ import { MainContent } from '@/components/layout/MainContent';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { LoadingFallback } from '@/components/common/LoadingFallback';
 import {
-  findFirstAccessibleLinkInLayout,
   findFirstVisibleLinkInLayout,
+  findPreferredDefaultLinkInLayout,
   isLinkAccessible,
   layoutContainsLink,
   visibleLayouts,
@@ -32,6 +32,10 @@ import { rememberLastVisited, sectionLandingLink } from '@/lib/lastVisited';
 import { parseAdminRoute } from '@/lib/adminRoute';
 import { resolveObject } from '@/lib/schemaResolver';
 import { Button } from '@/components/ui/button';
+import { AppearancePage } from '@/features/appearance/AppearancePage';
+import { ChangelogPage } from '@/features/changelog/ChangelogPage';
+import { OnboardingNavGate } from '@/features/onboarding/OnboardingNavGate';
+import { OVERVIEW_VIEW_NAME } from '@/features/overview/constants';
 
 const BootstrapWizard = lazy(() =>
   import('@/components/bootstrap/BootstrapWizard').then((m) => ({ default: m.BootstrapWizard })),
@@ -53,6 +57,7 @@ export default function AdminPanel() {
   const activeAccountId = useAuthStore((s) => s.activeAccountId);
   const setActiveSection = useUIStore((s) => s.setActiveSection);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
+  const activeSection = useUIStore((s) => s.activeSection);
   const canViewBootstrap = useCanAccess('x:Bootstrap');
   const { canGet, hasPermission: hasPerm } = usePermissionCheckers();
 
@@ -60,6 +65,8 @@ export default function AdminPanel() {
 
   const searchIndex = useSchemaStore((s) => s.searchIndex);
   const pageTitle = useMemo(() => {
+    if (section === 'Appearance') return t('appearance.label', 'Appearance');
+    if (section === 'Changelog') return t('changelog.label', 'Changelog');
     if (!section) return t('dashboard.title', 'Dashboard');
     if (!viewName) return section;
     let label: string | undefined;
@@ -90,7 +97,7 @@ export default function AdminPanel() {
     const layouts = visibleLayouts(schema, canGet, hasPerm);
     const pickDefault = (): { layoutName: string; link: string | null } | null => {
       for (const layout of layouts) {
-        const link = findFirstAccessibleLinkInLayout(schema, layout, edition, canGet, hasPerm);
+        const link = findPreferredDefaultLinkInLayout(schema, layout, edition, canGet, hasPerm, OVERVIEW_VIEW_NAME);
         if (link) return { layoutName: layout.name, link };
       }
       if (layouts[0]) {
@@ -106,6 +113,12 @@ export default function AdminPanel() {
       setActiveSection(layoutName);
       if (link) navigate(`/${layoutName}/${link}`, { replace: true });
     };
+
+    if (section === 'Appearance' || section === 'Changelog') {
+      // Клиентские страницы вне раскладки схемы: боковая панель остаётся привязанной к реальному разделу.
+      if (!layouts.some((l) => l.name === activeSection)) setActiveSection(layouts[0]?.name ?? '');
+      return;
+    }
 
     if (section && viewName && !isLinkAccessible(schema, viewName, edition, canGet, hasPerm)) {
       const fallback = pickDefault();
@@ -141,6 +154,7 @@ export default function AdminPanel() {
     section,
     viewName,
     schema,
+    activeSection,
     setActiveSection,
     navigate,
     edition,
@@ -181,6 +195,7 @@ export default function AdminPanel() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <OnboardingNavGate />
       <TopBar />
       <div className="flex flex-1">
         <Sidebar />
@@ -188,7 +203,13 @@ export default function AdminPanel() {
           className={`flex-1 overflow-auto bg-content-background p-6 transition-[margin] ${sidebarOpen ? 'md:ml-64' : ''}`}
         >
           <ErrorBoundary key={activeAccountId ?? 'none'}>
-            <MainContent viewName={viewName} id={id} section={section} />
+            {section === 'Appearance' ? (
+              <AppearancePage />
+            ) : section === 'Changelog' ? (
+              <ChangelogPage />
+            ) : (
+              <MainContent viewName={viewName} id={id} section={section} />
+            )}
           </ErrorBoundary>
         </main>
       </div>

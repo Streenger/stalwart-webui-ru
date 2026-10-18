@@ -6,7 +6,7 @@
 
 import { useEffect, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getLogoState, loadLogoOnce, subscribeToLogo } from '@/lib/logoCache';
+import { ensureLogoLoaded, getLogoSnapshot, subscribeLogo } from '@/lib/logoCache';
 
 export function DefaultLogo() {
   const { t } = useTranslation();
@@ -31,10 +31,10 @@ export function DefaultLogo() {
 
 export default function Logo() {
   const { t } = useTranslation();
-  const logo = useSyncExternalStore(subscribeToLogo, getLogoState, getLogoState);
+  const logo = useSyncExternalStore(subscribeLogo, getLogoSnapshot, getLogoSnapshot);
 
   useEffect(() => {
-    loadLogoOnce();
+    ensureLogoLoaded();
   }, []);
 
   if (logo.status === 'custom') {
@@ -42,7 +42,7 @@ export default function Logo() {
   }
 
   if (logo.status === 'loading') {
-    return <span className="block h-7 w-[140px]" aria-hidden="true" />;
+    return <span className="h-7 w-[140px] block" aria-hidden="true" />;
   }
 
   return <DefaultLogo />;

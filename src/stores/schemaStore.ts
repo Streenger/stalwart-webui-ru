@@ -7,7 +7,96 @@
 import { layoutLabel } from '@/lib/localizeSchema';
 import { create } from 'zustand';
 import { layoutViewFor } from '@/lib/layout';
-import type { Schema, LayoutSubItem } from '@/types/schema';
+import type { Schema, LayoutSubItem, LayoutItem } from '@/types/schema';
+
+import { ONBOARDING_VIEW_NAME } from '@/features/onboarding/checklist';
+import { OVERVIEW_VIEW_NAME } from '@/features/overview/constants';
+
+// SCHEMA-DEVIATION: onboarding-checklist-nav-entry (see SCHEMA_DEVIATIONS.md)
+//
+// The sidebar is entirely server-driven (schema.layouts) — there's no
+// mechanism for the schema to describe a client-only page like this one, so
+// the link is spliced into the first layout's items right after Dashboard
+// (the single place layout mutations enter app state) rather than in every
+// consumer. Getting Started is *not* inserted in setSchema: it stays hidden
+// until OnboardingNavGate confirms the checklist is still useful, so
+// completed installs never flash the item then remove it.
+function withOnboardingNavEntry(schema: Schema): Schema {
+  const first = schema.layouts[0];
+  if (!first) return schema;
+
+  const alreadyPresent = first.items.some(
+    (item) => 'link' in item && item.link.viewName === ONBOARDING_VIEW_NAME,
+  );
+  if (alreadyPresent) return schema;
+
+  const onboardingLink: LayoutItem = {
+    link: { name: 'Getting Started', icon: 'rocket', viewName: ONBOARDING_VIEW_NAME },
+  };
+  const dashboardIdx = first.items.findIndex(
+    (item) => 'link' in item && item.link.viewName === 'CustomComponent/Dashboard',
+  );
+  // Prefer sitting above Overview when that fork entry is already present.
+  const overviewIdx = first.items.findIndex(
+    (item) => 'link' in item && item.link.viewName === OVERVIEW_VIEW_NAME,
+  );
+  const insertAt =
+    overviewIdx !== -1 ? overviewIdx : dashboardIdx === -1 ? 0 : dashboardIdx + 1;
+  const items = [...first.items.slice(0, insertAt), onboardingLink, ...first.items.slice(insertAt)];
+
+  return {
+    ...schema,
+    layouts: [{ ...first, items }, ...schema.layouts.slice(1)],
+  };
+}
+
+// SCHEMA-DEVIATION: community-overview-nav-entry (see SCHEMA_DEVIATIONS.md)
+//
+// Inventory page for Community (and all editions). Inserted under Getting
+// Started when present, otherwise under Dashboard. Survives hideOnboardingNav.
+function withOverviewNavEntry(schema: Schema): Schema {
+  const first = schema.layouts[0];
+  if (!first) return schema;
+
+  const alreadyPresent = first.items.some(
+    (item) => 'link' in item && item.link.viewName === OVERVIEW_VIEW_NAME,
+  );
+  if (alreadyPresent) return schema;
+
+  const overviewLink: LayoutItem = {
+    link: { name: 'Overview', icon: 'panels-top-left', viewName: OVERVIEW_VIEW_NAME },
+  };
+
+  const onboardingIdx = first.items.findIndex(
+    (item) => 'link' in item && item.link.viewName === ONBOARDING_VIEW_NAME,
+  );
+  const dashboardIdx = first.items.findIndex(
+    (item) => 'link' in item && item.link.viewName === 'CustomComponent/Dashboard',
+  );
+  const insertAt =
+    onboardingIdx !== -1 ? onboardingIdx + 1 : dashboardIdx !== -1 ? dashboardIdx + 1 : 0;
+  const items = [...first.items.slice(0, insertAt), overviewLink, ...first.items.slice(insertAt)];
+
+  return {
+    ...schema,
+    layouts: [{ ...first, items }, ...schema.layouts.slice(1)],
+  };
+}
+
+function withoutOnboardingNavEntry(schema: Schema): Schema {
+  let changed = false;
+  const layouts = schema.layouts.map((layout) => {
+    const items = layout.items.filter(
+      (item) => !('link' in item && item.link.viewName === ONBOARDING_VIEW_NAME),
+    );
+    if (items.length !== layout.items.length) {
+      changed = true;
+      return { ...layout, items };
+    }
+    return layout;
+  });
+  return changed ? { ...schema, layouts } : schema;
+}
 
 export interface SearchIndexEntry {
   text: string;
@@ -27,6 +116,10 @@ interface SchemaState {
   searchIndex: SearchIndexEntry[];
 
   setSchema: (schema: Schema) => void;
+  /** SCHEMA-DEVIATION: onboarding-checklist-nav-entry — show Getting Started only while useful. */
+  showOnboardingNav: () => void;
+  /** SCHEMA-DEVIATION: onboarding-checklist-nav-entry — drop Getting Started once complete. */
+  hideOnboardingNav: () => void;
 }
 
 function walkLayouts(schema: Schema): { viewToSection: Record<string, string>; linkEntries: SearchIndexEntry[] } {
@@ -76,12 +169,48 @@ function walkLayouts(schema: Schema): { viewToSection: Record<string, string>; l
   return { viewToSection, linkEntries };
 }
 
+/** Extra keywords so Overview / Getting Started / Appearance stay findable. */
+const FORK_VIEW_KEYWORDS: Record<string, string[]> = {
+  [OVERVIEW_VIEW_NAME]: ['overview', 'queue', 'dkim', 'inventory', 'home', 'community'],
+  [ONBOARDING_VIEW_NAME]: ['getting started', 'setup', 'onboarding', 'spf', 'dmarc', 'checklist'],
+  'CustomComponent/Dashboard': ['dashboard', 'metrics', 'charts'],
+  'CustomComponent/LiveDelivery': ['delivery', 'trace', 'troubleshoot', 'smtp'],
+  'CustomComponent/LiveTracing': ['tracing', 'live', 'debug'],
+};
+
+const CLIENT_PAGE_SEARCH_ENTRIES: SearchIndexEntry[] = [
+  {
+    text: 'Appearance',
+    type: 'link',
+    viewName: 'Appearance',
+    section: 'Appearance',
+    breadcrumb: 'Appearance',
+    keywords: ['theme', 'dark', 'light', 'color', 'appearance', 'corners'],
+  },
+  {
+    text: 'Changelog',
+    type: 'link',
+    viewName: 'Changelog',
+    section: 'Changelog',
+    breadcrumb: 'Changelog',
+    keywords: ['changelog', 'release', 'version', "what's new"],
+  },
+];
+
+function withForkKeywords(entries: SearchIndexEntry[]): SearchIndexEntry[] {
+  return entries.map((entry) => {
+    const extra = FORK_VIEW_KEYWORDS[entry.viewName];
+    if (!extra) return entry;
+    return { ...entry, keywords: [...(entry.keywords ?? []), ...extra] };
+  });
+}
+
 function buildSearchIndex(
   schema: Schema,
   viewToSection: Record<string, string>,
   linkEntries: SearchIndexEntry[],
 ): SearchIndexEntry[] {
-  const entries: SearchIndexEntry[] = [...linkEntries];
+  const entries: SearchIndexEntry[] = [...withForkKeywords(linkEntries), ...CLIENT_PAGE_SEARCH_ENTRIES];
 
   function displayNameFor(viewName: string): string {
     const obj = schema.objects[viewName];
@@ -169,7 +298,10 @@ export const useSchemaStore = create<SchemaState>()((set) => ({
   viewToSection: {},
   searchIndex: [],
 
-  setSchema: (schema) => {
+  setSchema: (rawSchema) => {
+    // Overview only — Getting Started is added later via showOnboardingNav when
+    // the checklist still has required steps pending (avoids nav flash).
+    const schema = withOverviewNavEntry(rawSchema);
     const { viewToSection, linkEntries } = walkLayouts(schema);
     const searchIndex = buildSearchIndex(schema, viewToSection, linkEntries);
     set({
@@ -177,6 +309,29 @@ export const useSchemaStore = create<SchemaState>()((set) => ({
       isLoaded: true,
       viewToSection,
       searchIndex,
+    });
+  },
+
+  showOnboardingNav: () => {
+    set((state) => {
+      if (!state.schema) return state;
+      const schema = withOnboardingNavEntry(state.schema);
+      if (schema === state.schema) return state;
+      const { viewToSection, linkEntries } = walkLayouts(schema);
+      const searchIndex = buildSearchIndex(schema, viewToSection, linkEntries);
+      return { schema, viewToSection, searchIndex };
+    });
+  },
+
+  hideOnboardingNav: () => {
+    set((state) => {
+      if (!state.schema) return state;
+      // Overview stays; only Getting Started is removed.
+      const schema = withoutOnboardingNavEntry(state.schema);
+      if (schema === state.schema) return state;
+      const { viewToSection, linkEntries } = walkLayouts(schema);
+      const searchIndex = buildSearchIndex(schema, viewToSection, linkEntries);
+      return { schema, viewToSection, searchIndex };
     });
   },
 }));

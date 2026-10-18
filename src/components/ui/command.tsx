@@ -11,6 +11,7 @@ import { Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
@@ -60,11 +61,9 @@ function CommandInput({
 
 function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
   return (
-    <CommandPrimitive.List
-      data-slot="command-list"
-      className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
-      {...props}
-    />
+    <ScrollArea viewportClassName="max-h-[300px]">
+      <CommandPrimitive.List data-slot="command-list" className={cn('overflow-x-hidden', className)} {...props} />
+    </ScrollArea>
   );
 }
 

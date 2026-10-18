@@ -16,7 +16,6 @@ import NotFound from './pages/NotFound';
 import { AdminPanel } from './pages/AdminPanel.lazy';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { getBasePath } from './lib/basePath';
-import { loadLogoOnce } from './lib/logoCache';
 import { applyAccessTokenOverride } from './stores/authStore';
 import { QueryProvider } from './data/QueryProvider';
 import { bindQueryClientToAuth, queryClient } from './data/queryClient';
@@ -24,21 +23,33 @@ import { bindQueryClientToAuth, queryClient } from './data/queryClient';
 (() => {
   try {
     const persisted = localStorage.getItem('stalwart-ui');
-    if (persisted) {
-      const parsed = JSON.parse(persisted);
-      const theme = parsed?.state?.theme;
-      if (theme === 'dark' || theme === 'light') {
-        document.documentElement.classList.toggle('dark', theme === 'dark');
-        return;
-      }
+    const state = persisted ? (JSON.parse(persisted)?.state ?? null) : null;
+    const theme = state?.theme;
+    const dark = theme === 'dark' || (theme !== 'light' && !!window.matchMedia?.('(prefers-color-scheme: dark)').matches);
+    document.documentElement.classList.toggle('dark', dark);
+    // Match uiStore defaults (stalwart + square) so the first paint is correct
+    // before zustand rehydrates — including brand-new sessions with no persisted state.
+    const colorTheme = state?.colorTheme ?? 'stalwart';
+    if (
+      colorTheme === 'stalwart' ||
+      colorTheme === 'ocean' ||
+      colorTheme === 'forest' ||
+      colorTheme === 'violet' ||
+      colorTheme === 'rose' ||
+      colorTheme === 'amber' ||
+      colorTheme === 'teal'
+    ) {
+      document.documentElement.dataset.theme = colorTheme;
     }
+    if ((state?.radius ?? 'square') === 'square') {
+      document.documentElement.dataset.radius = 'square';
+    }
+    const listDensity = state?.listDensity === 'compact' ? 'compact' : 'comfortable';
+    document.documentElement.dataset.listDensity = listDensity;
     // eslint-disable-next-line no-empty
   } catch {}
-  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-  document.documentElement.classList.toggle('dark', !!prefersDark);
 })();
 
-loadLogoOnce();
 applyAccessTokenOverride();
 bindQueryClientToAuth(queryClient);
 

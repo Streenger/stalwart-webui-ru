@@ -13,8 +13,35 @@ dist-ssr
 *.local
 
 .ignore
-scripts/
-
+scripts/*
+!scripts/dev-token.ps1
+!scripts/dev-token.sh
+!scripts/dev-server-init.ps1
+!scripts/dev-server-init.sh
+!scripts/dev-seed.ps1
+!scripts/dev-seed.sh
+!scripts/dev-seed-reports.ps1
+*.md
+!README.md
+!CHANGELOG.md
+!AGENTS.md
+!CLAUDE.md
+!SCHEMA_DEVIATIONS.md
+!DEVELOPMENT.md
+!.agents/rules/*.md
+!docs/UPSTREAM_SYNC.md
+!docs/SECURITY_OPERATIONS.md
+/SPEC-*
+# Tool-generated artifacts during agent sessions
+.playwright-mcp/
+/playwright-report/
+/test-results/
+outputs/
+.vite_*.log
+.tmp_*
+*.py
+webui.zip
+release_body.md
 .*
 !.gitignore
 !.prettierrc

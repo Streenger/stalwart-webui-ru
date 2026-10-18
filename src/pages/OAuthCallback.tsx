@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 
 import { useAuthStore } from '@/stores/authStore';
+import { ModeToggle } from '@/components/common/ModeToggle';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { getBasePath } from '@/lib/basePath';
 import { errorMessage } from '@/lib/jmapErrors';
@@ -107,6 +108,9 @@ export default function OAuthCallback() {
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="fixed right-4 top-4 z-50">
+          <ModeToggle />
+        </div>
         <div className="w-full max-w-sm space-y-4 text-center">
           <p className="text-sm text-destructive" role="alert">
             {error}
@@ -121,6 +125,9 @@ export default function OAuthCallback() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="fixed right-4 top-4 z-50">
+        <ModeToggle />
+      </div>
       <div className="flex flex-col items-center gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <p className="text-sm text-muted-foreground">{t('oauth.processing', 'Completing sign in...')}</p>
