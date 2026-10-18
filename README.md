@@ -17,13 +17,15 @@
 
 ## Установка на сервер Stalwart
 
-Stalwart скачивает веб-интерфейс как архив `webui.zip` по ссылке из настройки приложения (по умолчанию из `stalwartlabs/webui`). Чтобы использовать эту версию, укажите ссылку на архив из раздела [Releases](../../releases):
+Stalwart скачивает веб-интерфейс как архив `webui.zip` по ссылке из настройки приложения (по умолчанию из `stalwartlabs/webui`). Чтобы использовать эту версию, укажите ссылку на готовый архив из ветки [release](../../tree/release):
 
 ```
-https://github.com/Streenger/stalwart-webui-ru/releases/latest/download/webui.zip
+https://raw.githubusercontent.com/Streenger/stalwart-webui-ru/release/webui.zip
 ```
 
-Где указать: в админ-панели откройте веб-приложения (Applications / Web Applications), выберите приложение WebUI и замените URL ресурса. Затем нажмите обновление ресурсов или перезапустите сервер. Если после замены что-то пошло не так, верните прежний URL: `https://github.com/stalwartlabs/webui/releases/latest/download/webui.zip`. Названия пунктов зависят от версии Stalwart, сверяйтесь с [документацией](https://stalw.art/docs/).
+Где указать: в админ-панели откройте веб-приложения (Web Applications), выберите приложение WebUI и замените URL ресурса. Затем обновите ресурсы (кнопка обновления приложений в разделе действий) или перезапустите сервер. Если после замены что-то пошло не так, верните прежний URL: `https://github.com/stalwartlabs/webui/releases/latest/download/webui.zip`. Названия пунктов зависят от версии Stalwart, сверяйтесь с [документацией](https://stalw.art/docs/).
+
+Архив собирается из ветки `main` и выкладывается в ветку `release`. Номер выпуска указан в файле `README.md` той ветки и в [Releases](../../releases).
 
 ## Сборка из исходников
 
