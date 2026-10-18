@@ -25,7 +25,6 @@ function schemaStub(): Schema {
     forms: {},
     lists: {},
     enums: {},
-    dashboards: [],
     layouts: [],
   };
 }
@@ -35,7 +34,6 @@ describe('buildQueueOpsLinks', () => {
     const links = buildQueueOpsLinks(
       schemaStub(),
       { [QUEUE_DELIVERY_TRACE_VIEW]: 'Troubleshoot', [QUEUE_LOG_ENTRIES_VIEW]: 'Management' },
-      'community',
       (prefix) => prefix === 'sysLog',
       (perm) => perm === 'liveDeliveryTest',
     );
@@ -47,7 +45,6 @@ describe('buildQueueOpsLinks', () => {
     const links = buildQueueOpsLinks(
       schemaStub(),
       { [QUEUE_LOG_ENTRIES_VIEW]: 'Management' },
-      'community',
       (prefix) => prefix === 'sysLog',
       () => false,
     );

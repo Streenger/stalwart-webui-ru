@@ -247,7 +247,13 @@ export async function jmapGetBatched(
     });
     items.push(...(result.list ?? []));
   }
-  return items;
+  // /get не гарантирует порядок ответа, поэтому возвращаем объекты в порядке запрошенных id
+  // (исправление из форка LinkPhoenix/stalwart-webui-fork).
+  const itemsById = new Map(items.map((item) => [item.id, item]));
+  return ids.flatMap((id) => {
+    const item = itemsById.get(id);
+    return item ? [item] : [];
+  });
 }
 
 export async function jmapQueryAll(

@@ -18,7 +18,6 @@ function minimalSchema(): Schema {
     forms: {},
     lists: {},
     enums: {},
-    dashboards: [],
     layouts: [
       {
         name: 'Management',

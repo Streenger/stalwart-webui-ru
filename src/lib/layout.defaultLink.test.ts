@@ -16,7 +16,6 @@ function schemaWithLinks(): Schema {
     forms: {},
     lists: {},
     enums: {},
-    dashboards: [{ id: 'overview', name: 'Overview', cards: [], charts: [] } as never],
     layouts: [],
   };
 }
@@ -38,17 +37,5 @@ describe('findPreferredDefaultLinkInLayout', () => {
     // CustomComponent/* is visible; Dashboard is enterprise → inaccessible on community
     const link = findPreferredDefaultLinkInLayout(schema, layout, 'community', () => true, () => false);
     expect(link).toBe('CustomComponent/Overview');
-  });
-
-  it('keeps first accessible link when Dashboard is usable (enterprise + perms)', () => {
-    const schema = schemaWithLinks();
-    const link = findPreferredDefaultLinkInLayout(
-      schema,
-      layout,
-      'enterprise',
-      () => true,
-      (perm) => perm === 'liveMetrics',
-    );
-    expect(link).toBe('CustomComponent/Dashboard');
   });
 });
