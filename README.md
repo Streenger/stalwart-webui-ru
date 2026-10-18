@@ -1,148 +1,51 @@
-<p align="center">
-    <a href="https://stalw.art">
-    <img src="./img/logo-red.svg" height="150">
-    </a>
-</p>
+# Stalwart WebUI — русская версия
 
-<h3 align="center">
-  Web-based User Interface for Stalwart 🛡️
-</h3>
+Форк [stalwartlabs/webui](https://github.com/stalwartlabs/webui) для почтового сервера [Stalwart](https://stalw.art): веб-интерфейс администратора на русском языке с российскими настройками по умолчанию и без разделов, недоступных в бесплатной (Community) версии.
 
-<br>
+Оригинальное описание проекта: [README.upstream.md](README.upstream.md).
 
-<p align="center">
-  <a href="https://github.com/stalwartlabs/webui/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/stalwartlabs/webui/build.yml?style=flat-square" alt="continuous integration"></a>
-  &nbsp;
-  <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL_v3-blue.svg?label=license&style=flat-square" alt="License: AGPL v3"></a>
-  &nbsp;
-  <a href="https://stalw.art/docs/get-started/"><img src="https://img.shields.io/badge/read_the-docs-red?style=flat-square" alt="Documentation"></a>
-</p>
-<p align="center">
-  <a href="https://mastodon.social/@stalwartlabs"><img src="https://img.shields.io/mastodon/follow/109929667531941122?style=flat-square&logo=mastodon&color=%236364ff&label=Follow%20on%20Mastodon" alt="Mastodon"></a>
-  &nbsp;
-  <a href="https://twitter.com/stalwartlabs"><img src="https://img.shields.io/twitter/follow/stalwartlabs?style=flat-square&logo=x&label=Follow%20on%20Twitter" alt="Twitter"></a>
-</p>
-<p align="center">
-  <a href="https://discord.gg/jtgtCNj66U"><img src="https://img.shields.io/discord/923615863037390889?label=Join%20Discord&logo=discord&style=flat-square" alt="Discord"></a>
-  &nbsp;
-  <a href="https://matrix.to/#/#stalwart:matrix.org"><img src="https://img.shields.io/matrix/stalwartmail%3Amatrix.org?label=Join%20Matrix&logo=matrix&style=flat-square" alt="Matrix"></a>
-</p>
+## Что изменено относительно оригинала
 
-## Features
-
-**Stalwart WebUI** is schema-driven single-page application for administering [Stalwart](https://stalw.art). After authentication the panel fetches a JSON schema from the server and dynamically generates all forms, lists, navigation, and layouts from that schema. Nothing is hardcoded.
-
-Key features:
-
-- **Schema-driven UI**: All forms, lists, and navigation are generated from a JSON schema fetched from `/api/schema` after login. No object types, field names, or layouts are hardcoded.
-- **JMAP protocol**: All data operations (queries, creates, updates, deletes, blob uploads) use JMAP (RFC 8620) with method chaining and result references.
-- **Permission-aware**: Every button, link, field, and section respects the user's permissions. Elements the user cannot access are hidden.
-
-## Screenshots
-
-<img src="./img/demo.gif">
-
-## Get Started
-
-Stalwart WebUI is included with Stalwart Mail Server, to install Stalwart Mail Server on your server by following the instructions for your platform:
-
-- [Linux / MacOS](https://stalw.art/docs/install/linux)
-- [Windows](https://stalw.art/docs/install/windows)
-- [Docker](https://stalw.art/docs/install/docker)
-
-All documentation is available at [stalw.art/docs/get-started](https://stalw.art/docs/get-started).
-
-## Getting started
-
-Prerequisites:
-
-- Node.js 18 or later
-- A running Stalwart instance (for JMAP API calls)
-
-Install dependencies:
-
-```
-npm install
-```
-
-### Environment variables
-
-Configuration is done through Vite environment variables. Copy or edit `.env.development` in the project root:
-
-```
-VITE_API_BASE_URL=http://localhost:443
-VITE_ACCESS_TOKEN=
-VITE_OAUTH_SCOPES=
-```
-
-| Variable | Description |
+| Область | Что сделано |
 |---|---|
-| `VITE_API_BASE_URL` | URL of the Stalwart server. Used for all API requests during development. In production builds (when empty or unset) requests are relative to the current origin. |
-| `VITE_ACCESS_TOKEN` | When set, skips the OAuth flow entirely and uses this token for all requests. Useful for local development and testing. |
-| `VITE_OAUTH_SCOPES` | Optional OAuth scopes. Omitted from the authorization request when empty. |
+| Язык | Интерфейс по умолчанию на русском. Переведены тексты интерфейса (`src/i18n/ru.json`, с русскими формами множественного числа) и текстовое описание форм, списков и полей, которое сервер присылает в схеме `/api/schema` (`src/i18n/schema-ru.json`). Непереведённые строки остаются на английском. |
+| Значения по умолчанию | Язык новых учётных записей `ru-RU`, часовой пояс `Europe/Moscow`. То же для групп, настроек учётной записи и языка полнотекстового поиска (`ru-RU` и `en-US`). Настраивается в `RU_FIELD_DEFAULTS` в `src/lib/localizeSchema.ts`. |
+| Списки языков и часовых поясов | Названия языков и стран берутся из `Intl.DisplayNames`, часовые пояса показываются со смещением UTC. |
+| Enterprise | Удалён код только для версии Enterprise (панель мониторинга, трассировка в реальном времени). Скрыты разделы, поля и действия, недоступные в Community. Убраны рекламные окна «Try Enterprise». |
 
-### OAuth client ID
+Сервер Stalwart остаётся без изменений: меняется только веб-интерфейс.
 
-The OAuth 2.0 client ID is not a build-time setting. It is read at runtime from a meta tag in `index.html`:
+## Установка на сервер Stalwart
 
-```html
-<meta name="oauth-client-id" content="" />
-```
-
-The server rewrites the `content` attribute when it serves the page, so a single build works for any deployment. When no
-client ID is configured the attribute is left empty and the panel falls back to `stalwart-webui`.
-
-### Bypassing OAuth for development
-
-Set `VITE_ACCESS_TOKEN` to a valid bearer token to skip the login page and go straight to the admin panel. You can obtain a token from the Stalwart server's token endpoint or use an API key:
+Stalwart скачивает веб-интерфейс как архив `webui.zip` по ссылке из настройки приложения (по умолчанию из `stalwartlabs/webui`). Чтобы использовать эту версию, укажите ссылку на архив из раздела [Releases](../../releases):
 
 ```
-VITE_ACCESS_TOKEN=your-bearer-token-here
+https://github.com/Streenger/stalwart-webui-ru/releases/latest/download/webui.zip
 ```
 
-### Running the dev server
+Где указать: в админ-панели откройте веб-приложения (Applications / Web Applications), выберите приложение WebUI и замените URL ресурса. Затем нажмите обновление ресурсов или перезапустите сервер. Если после замены что-то пошло не так, верните прежний URL: `https://github.com/stalwartlabs/webui/releases/latest/download/webui.zip`. Названия пунктов зависят от версии Stalwart, сверяйтесь с [документацией](https://stalw.art/docs/).
 
-```
-npm run dev
-```
+## Сборка из исходников
 
-This starts Vite's development server with hot module replacement, typically at `http://localhost:5173`.
-
-## Testing
-
-Unit and end-to-end tests are maintained in a separate repository.
-
-## Building for production
-
-```
-npm run build
+```bash
+npm ci
+npm run typecheck
+npm run build        # результат в dist/
+cd dist && zip -r ../webui.zip .
 ```
 
-This runs the TypeScript compiler followed by Vite's production build. Output
-goes to the `dist/` directory.
+Нужен Node.js 22 (на Node.js 20 сборка тоже проходит).
 
-To preview the production build locally:
+## Перевод
 
-```
-npm run preview
-```
+Как продолжить и дополнить перевод, описано в [docs/TRANSLATION.md](docs/TRANSLATION.md). Процесс такой:
 
-## Support
+1. `node scripts/extract-strings.mjs schema.json` показывает, какие строки схемы ещё не переведены.
+2. Переводы добавляются в `src/i18n/schema-ru.json` (ключ: английский текст, значение: русский).
+3. Тексты самого интерфейса лежат в `src/i18n/ru.json`.
 
-If you are having problems running Stalwart Mail Server, you found a bug or just have a question,
-do not hesitate to reach us on [Github Discussions](https://github.com/stalwartlabs/mail-server/discussions),
-[Reddit](https://www.reddit.com/r/stalwartlabs), [Discord](https://discord.gg/aVQr3jF8jd) or [Matrix](https://matrix.to/#/#stalwart:matrix.org).
-Additionally you may purchase a subscription to obtain priority support from Stalwart Labs LLC
+## Лицензия
 
-## License
+Код распространяется под лицензией [AGPL-3.0-only](LICENSES/AGPL-3.0-only.txt). Оригинальный проект выпущен по схеме двойного лицензирования (AGPL-3.0-only или коммерческая Stalwart Enterprise License). В этом форке выбрана AGPL-3.0-only, а код, доступный только по лицензии Enterprise, удалён. Подробности: [NOTICE.md](NOTICE.md).
 
-This project is dual-licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0; as published by the Free Software Foundation) and the **Stalwart Enterprise License v1 (SELv1)**:
-
-- The [GNU Affero General Public License v3.0](./LICENSES/AGPL-3.0-only.txt) is a free software license that ensures your freedom to use, modify, and distribute the software, with the condition that any modified versions of the software must also be distributed under the same license. 
-- The [Stalwart Enterprise License v1 (SELv1)](./LICENSES/LicenseRef-SEL.txt) is a proprietary license designed for commercial use. It offers additional features and greater flexibility for businesses that do not wish to comply with the AGPL-3.0 license requirements. 
-
-Each file in this project contains a license notice at the top, indicating the applicable license(s). The license notice follows the [REUSE guidelines](https://reuse.software/) to ensure clarity and consistency. The full text of each license is available in the [LICENSES](./LICENSES/) directory.
-  
-## Copyright
-
-Copyright (C) 2024, Stalwart Labs LLC
+Это неофициальный форк: он не связан со Stalwart Labs и не поддерживается ею.

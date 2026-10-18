@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0-ru.1] - 2026-10-18
+
+Русская версия (форк).
+
+### Added
+- Русская локализация интерфейса: `src/i18n/ru.json` (413 строк, русские формы множественного числа) и словарь схемы сервера `src/i18n/schema-ru.json`.
+- `src/lib/localizeSchema.ts`: подмена текстов схемы, названия языков и часовых поясов через `Intl`, русские значения по умолчанию (`ru-RU`, `Europe/Moscow`).
+- `scripts/extract-strings.mjs` и `docs/TRANSLATION.md` для продолжения перевода.
+
+### Removed
+- Код только для Enterprise (панель мониторинга, трассировка), рекламные окна Enterprise.
+
+### Changed
+- Разделы, поля и действия, недоступные в Community, скрываются.
+
 ## [2.0.0] - 2026-XX-XX
 
 ### Added
