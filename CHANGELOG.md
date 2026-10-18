@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0-ru.2] - 2026-10-18
+
+Полная русская локализация.
+
+### Changed
+- Словарь схемы `src/i18n/schema-ru.json` расширен до 5716 записей: покрыто 96,2% строк (5716 из 5942), включая все разрешения, типы событий (названия и пояснения) и метрики.
+- Без перевода намеренно оставлены 226 строк: названия продуктов и протоколов, алгоритмы, коды регионов (FoundationDB, Kafka, DKIM, ECDSA, us-east-1 и т. п.).
+
 ## [2.0.0-ru.1] - 2026-10-18
 
 Русская версия (форк).
