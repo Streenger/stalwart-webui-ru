@@ -1,7 +1,7 @@
 {
   "name": "stalwart-webui-ru",
   "private": true,
-  "version": "2.2.0-ru.1",
+  "version": "2.2.1-ru.1",
   "description": "Stalwart WebUI (русская сборка)",
   "type": "module",
   "scripts": {

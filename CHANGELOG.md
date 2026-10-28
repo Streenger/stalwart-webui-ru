@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.1-ru.1] - 2026-10-28
+
+### Changed
+- Форма создания пользователя: роль «User» и «Унаследованные права» заданы явно, рядом с языком ru-RU и поясом Europe/Moscow. Добавлен тест значений по умолчанию.
+
 ## [2.2.0-ru.1] - 2026-10-18
 
 Подключены остальные функции форка LinkPhoenix, из сборки убрано всё, что недоступно без лицензии Enterprise.

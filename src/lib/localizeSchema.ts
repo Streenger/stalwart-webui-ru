@@ -34,7 +34,13 @@ const SKIP_ENUMS = new Set(['Locale', 'TimeZone']);
 
 // Russian regional defaults, applied to form defaults.
 const RU_FIELD_DEFAULTS: Record<string, Record<string, unknown>> = {
-  'x:UserAccount': { locale: 'ru-RU', timeZone: 'Europe/Moscow' },
+  // Новый пользователь: роль «User» и унаследованные права (а не Admin / Custom).
+  'x:UserAccount': {
+    locale: 'ru-RU',
+    timeZone: 'Europe/Moscow',
+    roles: { '@type': 'User' },
+    permissions: { '@type': 'Inherit' },
+  },
   'x:GroupAccount': { locale: 'ru-RU', timeZone: 'Europe/Moscow' },
   'x:AccountSettings': { locale: 'ru-RU', timeZone: 'Europe/Moscow' },
   'x:Search': { defaultLanguage: 'ru-RU', supportedLanguages: { 'ru-RU': true, 'en-US': true } },
